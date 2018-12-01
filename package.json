@@ -11,10 +11,24 @@
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.1.6",
+    "apollo-datasource": "^0.2.1",
+    "apollo-datasource-rest": "^0.2.1",
+    "apollo-server": "^2.2.5",
+    "axios": "^0.18.0",
     "babel-preset-env": "^1.7.0",
+    "body-parser": "^1.18.3",
+    "cloudinary": "^1.13.2",
+    "compression": "^1.7.3",
+    "connect-multiparty": "^2.2.0",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-graphql": "^0.7.1",
-    "graphql": "^14.0.2"
+    "graphql": "^14.0.2",
+    "helmet": "^3.15.0",
+    "mongoose": "^5.3.13",
+    "pg": "^7.7.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.41.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
