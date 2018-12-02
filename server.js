@@ -22,15 +22,6 @@ const server = new ApolloServer({
   formatResponse: response => {
     console.log(response);
     return response;
-  },
-  context: async ({req}) => {
-    return {}
-    // const auth = ( req.headers && req.headers.authorization) || ''
-    // const email = new Buffer(auth, 'base64').toString('ascii')
-    //
-    // const users = await store.users.findOrCreate({ where: { email }})
-    // const user = users && users[0] ? users[0] : null
-    // return { user: { ...user.dataValues }}
   }
 })
 

@@ -3,9 +3,8 @@ import { gql } from 'apollo-server'
 const typeDefs = gql`
 
   type Query {
-    products: [Product]
-    users: [User]
-    me: User
+    products(productQuery: ProductQuery): [Product]!
+    users(userQuery: UserQuery): [User]!
   }
 
   type Product {
@@ -33,6 +32,18 @@ const typeDefs = gql`
   input UserInput {
     name: String!
     email: String!
+  }
+
+  input ProductQuery {
+    id: ID
+    name: String
+    description: String
+  }
+
+  input UserQuery {
+    id: ID
+    name: String
+    email: String
   }
 
   type UserUpdateResponse {

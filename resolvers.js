@@ -1,14 +1,11 @@
 const Query = {
-  me: async (_,__,{ dataSources }) => {
-    return await dataSources.userApi.findOrCreate()
-  }, 
-  users: async (_, __, { dataSources }) => {
-    return await dataSources.userApi.getAllUsers()
-  },
+  users: async (_, { userQuery }, { dataSources }) => (
+    await dataSources.userApi.getAllUsers({where: userQuery}
+  )),
 
-  products: async (_, __, { dataSources }) => {
-    return await dataSources.productApi.getAllProducts()
-  }
+  products: async (_, { productQuery }, { dataSources }) => (
+    await dataSources.productApi.getAllProducts({where: productQuery})
+  )
 }
 
 const Mutation = {

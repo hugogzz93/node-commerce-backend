@@ -11,13 +11,11 @@ export default class ProductAPI extends DataSource {
   }
 
   async getAllProducts(query = {}) {
-    const products =  await this.store.product.findAll(query)
-    console.log(products)
-    return products
+    return await this.store.Product.findAll(query)
   }
 
   async createProduct(productInput) {
-    return await this.store.product.create(productInput)
+    return await this.store.Product.create(productInput)
   }
   
   async findOrCreateProduct({ id: idArg } = {}) {
