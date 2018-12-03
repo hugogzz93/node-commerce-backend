@@ -46,11 +46,6 @@ const typeDefs = gql`
     email: String
   }
 
-  type UserUpdateResponse {
-    success: Boolean!
-    product: Product
-  }
-
   type ProductConnection {
     cursor: String!
     hasMore: Boolean!
