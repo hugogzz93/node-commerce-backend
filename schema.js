@@ -10,12 +10,14 @@ const typeDefs = gql`
   type Product {
     id: ID!
     name: String
+    users: [User]!
   }
 
   type User {
     id: ID!
     name: String!
     email: String!
+    products: [Product]!
   }
 
   type Mutation {

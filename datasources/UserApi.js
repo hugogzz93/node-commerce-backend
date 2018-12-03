@@ -17,7 +17,14 @@ export default class UserAPI extends DataSource {
   }
 
   async getAllUsers(query = {}) {
-    return await this.store.User.findAll(query)
+    // return []
+    return await this.store.User.findAll({
+      ...query,
+      include: [{
+        model: this.store.models.Product,
+        as: 'products'
+      }]
+    })
   }
 
   async createUser(userInput) {

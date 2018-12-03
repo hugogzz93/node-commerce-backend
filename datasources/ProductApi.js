@@ -11,7 +11,13 @@ export default class ProductAPI extends DataSource {
   }
 
   async getAllProducts(query = {}) {
-    return await this.store.Product.findAll(query)
+    return await this.store.Product.findAll({
+      ...query,
+      include: [{
+        model: this.store.models.User,
+        as: 'users'
+      }]
+    })
   }
 
   async createProduct(productInput) {

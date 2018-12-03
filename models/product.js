@@ -5,7 +5,9 @@ const createProduct = (connection, sequelize) => {
     name: sequelize.STRING,
     description: sequelize.STRING
   }, {});
-  Product.associate = function(models) {
+
+
+  Product.associate = function({ User }) {
     // associations can be defined here
   };
 

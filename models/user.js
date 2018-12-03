@@ -7,6 +7,7 @@ const createUser = (connection, sequelize) => {
   }, {});
   User.associate = function(models) {
     // associations can be defined here
+    // not working
   };
   return User;
 };
