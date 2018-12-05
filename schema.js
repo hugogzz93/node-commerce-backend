@@ -39,7 +39,8 @@ const typeDefs = gql`
   input ProductQuery {
     id: ID
     name: String
-    description: String
+    description: String,
+    userQuery: UserQuery
   }
 
   input UserQuery {

@@ -1,4 +1,5 @@
 import { DataSource } from 'apollo-datasource'
+import { Op } from 'sequelize'
 
 export default class ProductAPI extends DataSource {
   constructor({ store }) {
@@ -10,12 +11,21 @@ export default class ProductAPI extends DataSource {
     this.context = config.context;
   }
 
-  async getAllProducts(query = {}) {
+  async getAllProducts({name, id, userQuery} = {}) {
     return await this.store.Product.findAll({
-      ...query,
+      where: {
+        ...name ? {name: { [Op.iLike]: `%${name}%` }} : {},
+        ...id ? {id} : {}
+      },
       include: [{
         model: this.store.models.User,
-        as: 'users'
+        as: 'users',
+        where: {
+          ...userQuery ?
+              {
+                ...userQuery.name ? { name: { [Op.iLike]: `%${userQuery.name}%` } } : {}
+              } : {}
+        }
       }]
     })
   }

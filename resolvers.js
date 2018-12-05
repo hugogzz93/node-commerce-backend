@@ -1,10 +1,10 @@
 const Query = {
   users: async (_, { userQuery }, { dataSources }) => (
-    await dataSources.userApi.getAllUsers({where: userQuery})
+    await dataSources.userApi.getAllUsers( userQuery )
   ),
 
   products: async (_, { productQuery }, { dataSources }) => (
-    await dataSources.productApi.getAllProducts({where: productQuery})
+    await dataSources.productApi.getAllProducts( productQuery )
   )
 }
 
