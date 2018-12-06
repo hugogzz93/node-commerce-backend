@@ -18,6 +18,7 @@ export default class ProductAPI extends DataSource {
         ...id ? {id} : {}
       },
       include: [{
+        required: false,
         model: this.store.models.User,
         as: 'users',
         where: {
