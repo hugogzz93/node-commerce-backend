@@ -17,10 +17,11 @@ export default class UserAPI extends DataSource {
     this.context = config.context;
   }
 
-  async getAllUsers({name} = {}) {
+  async getAllUsers({name, id, email} = {}) {
     return await this.store.User.findAll({
       where: {
         ...name ? {name: { [Op.iLike]: `%${name}%` }} : {},
+        ...email ? {email: { [Op.iLike]: `%${email}%` }} : {},
         ...id ? {id} : {}
       },
       include: [{
@@ -43,5 +44,11 @@ export default class UserAPI extends DataSource {
     return users && users[0] ? users[0] : null;
   }
 
-
+  async updateUsers(query, input) {
+    return await this
+      .getAllUsers(query)
+      .then(users => users
+        .map(user => ( user.update(input) )
+      )) 
+  }
 }

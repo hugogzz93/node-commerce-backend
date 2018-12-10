@@ -24,6 +24,7 @@ const typeDefs = gql`
     login(email: String!): String
     createProduct(productInput: ProductInput!): Product
     createUser(userInput: UserInput!): User
+    updateUser(userQuery: UserQuery!, userInput: UserInput!): [User]
   }
 
   input ProductInput {
@@ -32,8 +33,8 @@ const typeDefs = gql`
   }
 
   input UserInput {
-    name: String!
-    email: String!
+    name: String
+    email: String
   }
 
   input ProductQuery {
