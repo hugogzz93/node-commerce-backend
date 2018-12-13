@@ -1,5 +1,8 @@
 import { DataSource } from 'apollo-datasource'
 import { Op } from 'sequelize'
+import bcrypt from 'bcrypt'
+
+const saltRounds = 10;
 
 export default class UserAPI extends DataSource {
   constructor({ store }) {
@@ -17,7 +20,17 @@ export default class UserAPI extends DataSource {
     this.context = config.context;
   }
 
-  async getAllUsers({name, id, email} = {}) {
+  async find({name, id,  email}) {
+    return await this.store.User.findOne({
+      where: {
+        ...id ? {id} : {},
+        ...name ? {name} : {},
+        ...email ? {email} : {},
+      }
+    })
+  }
+
+  async where({name, id, email, } = {}) {
     return await this.store.User.findAll({
       where: {
         ...name ? {name: { [Op.iLike]: `%${name}%` }} : {},
@@ -35,20 +48,17 @@ export default class UserAPI extends DataSource {
     return await this.store.User.create(userInput)
   }
 
-  async findOrCreateUser({ email: emailArg } = {}) {
-    const email =
-      this.context && this.context.user ? this.context.user.email : emailArg;
-    if (!email || !isEmail.validate(email)) return null;
-
-    const users = await this.store.User.findOrCreate({ where: { email } });
-    return users && users[0] ? users[0] : null;
-  }
-
   async updateUsers(query, input) {
     return await this
-      .getAllUsers(query)
-      .then(users => users
-        .map(user => ( user.update(input) )
+      .where(query)
+      .then(async users => users
+        .map(async user => { 
+          if(input.password) {
+            input.salt = await  bcrypt.genSalt(saltRounds)
+            input.password = await bcrypt.hash(input.password, input.salt)
+          }
+          return await user.update(input)
+        }
       )) 
   }
 }

@@ -1,17 +1,16 @@
 const Query = {
   users: async (_, { userQuery }, { dataSources }) => (
-    await dataSources.userApi.getAllUsers( userQuery )
+    await dataSources.userApi.where( userQuery )
   ),
 
   products: async (_, { productQuery }, { dataSources }) => (
     await dataSources.productApi.getAllProducts( productQuery )
-  )
+  ),
 }
 
 const Mutation = {
-  login: async (_, { email }, { dataSources }) => {
-    const user = await dataSources.userApi.findOrCreateUser({ email })
-    if(user) return new Buffer(email).toString('base64')
+  login: async (_, { email, password }, { dataSources }) => {
+    return await dataSources.sessionApi.login({email, password})
   },
   
   createProduct: async (_, input, { dataSources }) => {

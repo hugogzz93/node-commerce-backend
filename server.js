@@ -3,7 +3,7 @@ import { typeDefs }from './schema'
 import resolvers from './resolvers'
 import UserApi from './datasources/UserApi'
 import ProductApi from './datasources/ProductApi'
-
+import SessionApi from './datasources/SessionApi'
 import { createStore } from './datastore'
 
 const store = createStore()
@@ -13,7 +13,8 @@ const server = new ApolloServer({
   resolvers,
   dataSources: () => ({
     userApi: new UserApi({ store }),
-    productApi: new ProductApi({ store })
+    productApi: new ProductApi({ store }),
+    sessionApi: new SessionApi({ store })
   }),
   formatError: error => {
     console.log(error);

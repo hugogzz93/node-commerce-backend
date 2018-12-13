@@ -15,6 +15,16 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
+      auth_token: {
+        type: Sequelize.STRING,
+        unigue: true
+      },
+      password: {
+        type: Sequelize.STRING
+      },
+      password_salt: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
