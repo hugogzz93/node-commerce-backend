@@ -22,6 +22,10 @@ export default class SessionApi extends DataSource {
     return await this.setNewAuthToken(user)
   }
 
+  async findByAuthToken(auth_token) {
+    return await this.store.User.find({where: {auth_token}})
+  }
+
   async setNewAuthToken(user) {
     const auth_token = await bcrypt.hash(`user:${user.id}${new Date()}`, 1)
     return await user.update({auth_token})

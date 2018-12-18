@@ -6,6 +6,10 @@ const Query = {
   products: async (_, { productQuery }, { dataSources }) => (
     await dataSources.productApi.getAllProducts( productQuery )
   ),
+
+  loginJWT: async (_, { auth_token }, { dataSources }) => (
+    await dataSources.sessionApi.findByAuthToken(auth_token)
+  )
 }
 
 const Mutation = {

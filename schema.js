@@ -5,6 +5,7 @@ const typeDefs = gql`
   type Query {
     products(productQuery: ProductQuery): [Product]!
     users(userQuery: UserQuery): [User]!
+    loginJWT(auth_token: String!): User
   }
 
   type Product {
