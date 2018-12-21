@@ -7,6 +7,9 @@ import SessionApi from './datasources/SessionApi'
 import { createStore } from './datastore'
 
 const store = createStore()
+// store.User.findAll().then(async r => {
+//   r.forEach(r => r.update({password: 'test'}))
+// })
 
 const server = new ApolloServer({ 
   typeDefs,

@@ -19,6 +19,31 @@ module.exports = {
         type: Sequelize.STRING,
         unigue: true
       },
+  
+      phone: {
+        type: Sequelize.STRING,
+      },
+      country: {
+        type: Sequelize.STRING
+      },
+      city: {
+        type: Sequelize.STRING
+      },
+      street: {
+        type: Sequelize.STRING
+      },
+      street_2: {
+        type: Sequelize.STRING
+      },
+      street_number: {
+        type: Sequelize.STRING
+      },
+      zipcode: {
+        type: Sequelize.STRING
+      },
+      description: {
+        type: Sequelize.TEXT
+      },
       password: {
         type: Sequelize.STRING
       },

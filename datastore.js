@@ -12,8 +12,6 @@ const createStore = () => {
   const User = createUser(connection, sequelize)
   const UserProducts = createUserProducts(connection, sequelize)
   
-  // User.hasMany(UserProducts, {foreignKey: 'user_id'})
-  // Product.hasMany(UserProducts, {foreignKey: 'product_id'})
   User.belongsToMany(Product, {
     through: 'UserProducts',
     foreignKey: 'user_id',

@@ -10,9 +10,9 @@ module.exports = {
      return Promise.all([
 
        queryInterface.bulkInsert('Users', [
-         {name: 'hugo', email: 'pinelo93@gmail.com', createdAt: new Date(), updatedAt: new Date()},
-         {name: 'gonzales', email: 'gonzales@gmail.com', createdAt: new Date(), updatedAt: new Date()},
-         {name: 'marcelo', email: 'marcelo@gmail.com', createdAt: new Date(), updatedAt: new Date()}
+         {name: 'hugo', email: 'pinelo93@gmail.com', createdAt: new Date(), updatedAt: new Date(), password: 'test'},
+         {name: 'gonzales', email: 'gonzales@gmail.com', createdAt: new Date(), updatedAt: new Date(), password: 'test'},
+         {name: 'marcelo', email: 'marcelo@gmail.com', createdAt: new Date(), updatedAt: new Date(), password: 'test'}
        ] , {}),
 
        queryInterface.bulkInsert('Products',[

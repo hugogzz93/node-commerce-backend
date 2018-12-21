@@ -20,6 +20,14 @@ const typeDefs = gql`
     email: String!
     password: String
     auth_token: String
+    phone: String
+    country: String
+    city: String
+    street: String
+    street_2: String
+    street_number: String
+    zipcode: String
+    description: String
     products: [Product]!
   }
 
@@ -27,7 +35,9 @@ const typeDefs = gql`
     login(email: String!, password: String!): User
     createProduct(productInput: ProductInput!): Product
     createUser(userInput: UserInput!): User
-    updateUser(userQuery: UserQuery!, userInput: UserInput!): [User]
+    updateUser(viewer: Viewer!,
+               userQuery: UserQuery!,
+               userInput: UserInput!): [User]
   }
 
   input ProductInput {
@@ -39,12 +49,20 @@ const typeDefs = gql`
     name: String
     email: String
     password: String
+    phone: String
+    country: String
+    city: String
+    street: String
+    street_2: String
+    street_number: String
+    zipcode: String
+    description: String
   }
 
   input ProductQuery {
     id: ID
     name: String
-    description: String,
+    description: String
     userQuery: UserQuery
   }
 
@@ -59,9 +77,9 @@ const typeDefs = gql`
     hasMore: Boolean!
     products: [Product]
   }
+
+  input Viewer {
+    auth_token: String!
+  }
 `
 export {typeDefs}
-
-
-
-

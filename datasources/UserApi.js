@@ -48,15 +48,12 @@ export default class UserAPI extends DataSource {
     return await this.store.User.create(userInput)
   }
 
-  async updateUsers(query, input) {
+  async updateUsers(query, input, viewer) {
     return await this
       .where(query)
       .then(async users => users
         .map(async user => { 
-          if(input.password) {
-            input.salt = await  bcrypt.genSalt(saltRounds)
-            input.password = await bcrypt.hash(input.password, input.salt)
-          }
+          if(!user.allowsModificationsFrom(viewer)) return null
           return await user.update(input)
         }
       )) 
