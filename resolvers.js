@@ -25,10 +25,11 @@ const Mutation = {
     return await dataSources.userApi.createUser(input.userInput)
   },
 
-  updateUser: async (_, input, { dataSources }) => {
+  updateUser: async (_, input, { dataSources, token }) => {
+    // throw Object.keys(input.userQuery ).join(',')
     return await dataSources.userApi.updateUsers(input.userQuery,
                                                  input.userInput,
-                                                 input.viewer)
+                                                 {auth_token: token})
   }
 }
 

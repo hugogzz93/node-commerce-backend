@@ -35,8 +35,7 @@ const typeDefs = gql`
     login(email: String!, password: String!): User
     createProduct(productInput: ProductInput!): Product
     createUser(userInput: UserInput!): User
-    updateUser(viewer: Viewer!,
-               userQuery: UserQuery!,
+    updateUser(userQuery: UserQuery!,
                userInput: UserInput!): [User]
   }
 

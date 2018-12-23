@@ -30,17 +30,13 @@ const createUser = (connection, sequelize) => {
       beforeSave: async (user, options) => {
         user = await encryptUser(user)
       },
-    },
-    instanceMethods: {
-      allawsModificationsFrom({auth_token}) {
-        return auth_token == this.auth_token
-      }
     }
   });
-  User.associate = function(models) {
-    // associations can be defined here
-    // not working
-  };
+
+  User.prototype.allowsModificationsFrom = function({auth_token}) {
+    // throw `${auth_token} != ${this.dataValues.auth_token}`
+    return auth_token == this.dataValues.auth_token
+  }
 
   return User;
 };
