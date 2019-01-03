@@ -34,9 +34,22 @@ const createUser = (connection, sequelize) => {
   });
 
   User.prototype.allowsModificationsFrom = function({auth_token}) {
-    // throw `${auth_token} != ${this.dataValues.auth_token}`
     return auth_token == this.dataValues.auth_token
   }
+
+  User.prototype.addProducts = async function(productArray) {
+    console.log(productArray.map(p => p.dataValues.id))
+     return productArray.map(async product => this.addProduct(product))
+  }
+
+  User.prototype.removeProducts = async function(productArray) {
+    console.log(productArray.map(p => p.dataValues.id))
+    return productArray.map(async product => this.removeProduct(product))
+  }
+
+  // User.prototype.products = async function() {
+  //   await this.getProducts()
+  // }
 
   return User;
 };

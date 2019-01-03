@@ -26,10 +26,21 @@ const Mutation = {
   },
 
   updateUser: async (_, input, { dataSources, token }) => {
-    // throw Object.keys(input.userQuery ).join(',')
     return await dataSources.userApi.updateUsers(input.userQuery,
                                                  input.userInput,
                                                  {auth_token: token})
+  },
+  updateUserProducts: async (_, input, {dataSources: {userApi, productApi}, token }) => {
+    try {
+      const user = await userApi.find({auth_token: token})
+      const addedProducts = await productApi.where(input.productAdditions)
+      const removedProducts = await productApi.where(input.productRemovals)
+      await user.addProducts(addedProducts)
+      await user.removeProducts(removedProducts)
+      return await user.getProducts()
+    } catch(e) {
+      return e
+    }
   }
 }
 

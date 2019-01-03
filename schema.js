@@ -37,7 +37,8 @@ const typeDefs = gql`
     createProduct(productInput: ProductInput!): Product
     createUser(userInput: UserInput!): User
     updateUser(userQuery: UserQuery!,
-               userInput: UserInput!): [User]
+               userInput: UserInput!): [User],
+    updateUserProducts(productAdditions: [ProductQuery], productRemovals: [ProductQuery]): [Product]!
   }
 
   input ProductInput {
