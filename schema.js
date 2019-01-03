@@ -12,11 +12,12 @@ const typeDefs = gql`
     id: ID!
     name: String
     users: [User]
+    description: String
   }
 
   type User {
     id: ID!
-    name: String!
+    name: String
     email: String!
     password: String
     auth_token: String

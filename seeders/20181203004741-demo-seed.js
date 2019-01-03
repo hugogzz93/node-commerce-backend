@@ -1,8 +1,3 @@
-// import User from '../models/user'
-// import Product from '../models/product'
-
-// const User = require('../models/user')
-// const Product = require('../models/product')
 
 module.exports = {
   up: (queryInterface, Sequelize) => {

@@ -1,7 +1,7 @@
 import sequelize from 'sequelize'
 import { createUser } from './models/user'
 import { createProduct } from './models/product'
-import { createUserProducts } from './models/userproduct'
+// import { createUserProducts } from './models/userproduct'
 
 const createStore = () => {
   const connection = new sequelize('dev_search', 'hugo', '', {
@@ -10,7 +10,7 @@ const createStore = () => {
 
   const Product = createProduct(connection, sequelize)
   const User = createUser(connection, sequelize)
-  const UserProducts = createUserProducts(connection, sequelize)
+  // const UserProducts = createUserProducts(connection, sequelize)
   
   User.belongsToMany(Product, {
     through: 'UserProducts',
@@ -26,7 +26,7 @@ const createStore = () => {
     as: 'users'
   })
 
-  return { User, Product, UserProducts, models: connection.models }
+  return { User, Product, models: connection.models }
 
 }
 

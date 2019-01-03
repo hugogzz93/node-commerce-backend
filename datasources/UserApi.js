@@ -1,6 +1,7 @@
 import { DataSource } from 'apollo-datasource'
 import { Op } from 'sequelize'
 import bcrypt from 'bcrypt'
+import QueryBuilder from '../lib/QueryBuilder'
 
 const saltRounds = 10;
 
@@ -20,23 +21,14 @@ export default class UserAPI extends DataSource {
     this.context = config.context;
   }
 
-  async find({name, id,  email}) {
-    return await this.store.User.findOne({
-      where: {
-        ...id ? {id} : {},
-        ...name ? {name} : {},
-        ...email ? {email} : {},
-      }
-    })
+  async find(query) {
+    return await this.store.User.findOne({ where: query })
   }
 
-  async where({name, id, email, } = {}) {
+  async where(raw_query) {
+    const query = new QueryBuilder(raw_query).iLike()
     return await this.store.User.findAll({
-      where: {
-        ...name ? {name: { [Op.iLike]: `%${name}%` }} : {},
-        ...email ? {email: { [Op.iLike]: `%${email}%` }} : {},
-        ...id ? {id} : {}
-      },
+      where: query,
       include: [{
         model: this.store.models.Product,
         as: 'products'

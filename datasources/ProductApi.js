@@ -1,5 +1,6 @@
 import { DataSource } from 'apollo-datasource'
 import { Op } from 'sequelize'
+import QueryBuilder from '../lib/QueryBuilder'
 
 export default class ProductAPI extends DataSource {
   constructor({ store }) {
@@ -11,23 +12,25 @@ export default class ProductAPI extends DataSource {
     this.context = config.context;
   }
 
-  async getAllProducts({name, id, userQuery} = {}) {
+  async like({name, id, userQuery} = {}) {
+    const query = new QueryBuilder({name, id}).iLike()
+    userQuery = new QueryBuilder(userQuery).iLike()
     return await this.store.Product.findAll({
-      where: {
-        ...name ? {name: { [Op.iLike]: `%${name}%` }} : {},
-        ...id ? {id} : {}
-      },
+      where: query,
       include: [{
         required: false,
         model: this.store.models.User,
         as: 'users',
-        where: {
-          ...userQuery ?
-              {
-                ...userQuery.name ? { name: { [Op.iLike]: `%${userQuery.name}%` } } : {}
-              } : {}
-        }
+        where: userQuery
       }]
+    })
+  }
+
+  async where(productQuery) {
+    return await this.store.Product.findAll({
+      where: {
+        [Op.or]: productQuery
+      }
     })
   }
 
