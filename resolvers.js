@@ -4,9 +4,7 @@ const Query = {
   ),
 
   products: async (_, { userQuery, ...productQuery }, { dataSources }) => (
-    await dataSources.productApi.like( productQuery )
-                                .include({users: userQuery})
-                                .runQuery()
+    await dataSources.productApi.like( productQuery ).runQuery()
   ),
 
   loginJWT: async (_, { auth_token }, { dataSources }) => (
@@ -32,6 +30,7 @@ const Mutation = {
                                                 input.userInput,
                                                 {auth_token: token})
   },
+  
   updateUserProducts: async (_, input, {dataSources: {userApi, productApi}, token }) => {
     try {
       const user = await userApi.find({auth_token: token})
@@ -46,4 +45,10 @@ const Mutation = {
   }
 }
 
-export default { Query, Mutation }
+const Product = {
+  users: async (product, query) => {
+    return await product.getUsers(query)
+  }
+}
+
+export default { Query, Mutation, Product }

@@ -12,13 +12,10 @@ export default class ProductAPI extends DataSource {
     this.context = config.context;
   }
 
-  
-
   runQuery() {
-    const {queryMethod, query} = this
+    const { queryMethod, query } = this
     this.cleanQueryData()
-    console.log('@@@@@@@', query)
-    return queryMethod({where: {}})
+    return queryMethod.apply(this.store.Product, [query])
   }
 
   cleanQueryData() {

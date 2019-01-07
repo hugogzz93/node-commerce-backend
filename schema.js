@@ -11,7 +11,7 @@ const typeDefs = gql`
   type Product {
     id: ID!
     name: String
-    users: [User]
+    users(userQuery: UserQuery): [User]
     description: String
   }
 
@@ -65,7 +65,6 @@ const typeDefs = gql`
     id: ID
     name: String
     description: String
-    userQuery: UserQuery
   }
 
   input UserQuery {
