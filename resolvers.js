@@ -26,9 +26,9 @@ const Mutation = {
   },
 
   updateUser: async (_, input, { dataSources, token }) => {
-    return await dataSources.userApi.updateUsers(input.userQuery,
-                                                 input.userInput,
-                                                 {auth_token: token})
+    return await dataSources.userApi.updateUser(input.userQuery,
+                                                input.userInput,
+                                                {auth_token: token})
   },
   updateUserProducts: async (_, input, {dataSources: {userApi, productApi}, token }) => {
     try {

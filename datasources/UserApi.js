@@ -40,9 +40,9 @@ export default class UserAPI extends DataSource {
     return await this.store.User.create(userInput)
   }
 
-  async updateUsers(query, input, viewer) {
+  async updateUser(query, input, viewer) {
     return await this
-      .where(query)
+      .find(query)
       .then(async users => users
         .map(async user => { 
           if(!user.allowsModificationsFrom(viewer)) return null

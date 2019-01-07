@@ -12,9 +12,9 @@ export default class ProductAPI extends DataSource {
     this.context = config.context;
   }
 
-  async like({name, id, userQuery} = {}) {
-    const query = new QueryBuilder({name, id}).iLike()
-    userQuery = new QueryBuilder(userQuery).iLike()
+  async like({userQuery, ...productQuery}) {
+    const query = new QueryBuilder(productQuery).iLike()
+    // userQuery = userQuery ? new QueryBuilder(userQuery).iLike() : userQuery
     return await this.store.Product.findAll({
       where: query,
       include: [{
