@@ -12,30 +12,52 @@ export default class ProductAPI extends DataSource {
     this.context = config.context;
   }
 
-  async like({userQuery, ...productQuery}) {
-    const query = new QueryBuilder(productQuery).iLike()
-    // userQuery = userQuery ? new QueryBuilder(userQuery).iLike() : userQuery
-    return await this.store.Product.findAll({
-      where: query,
-      include: [{
+  
+
+  runQuery() {
+    const {queryMethod, query} = this
+    this.cleanQueryData()
+    console.log('@@@@@@@', query)
+    return queryMethod({where: {}})
+  }
+
+  cleanQueryData() {
+    this.query = null
+    this.queryMethod = null
+  }
+
+  include(options) {
+    this.query.include = this.query.include || []
+    if(options.users) {
+      console.log('test')
+      this.query.include.push({
         required: false,
         model: this.store.models.User,
         as: 'users',
-        where: userQuery
-      }]
-    })
+        where: options.user
+      })
+    }
+    return this
   }
 
-  async where(productQuery) {
-    return await this.store.Product.findAll({
-      where: {
-        [Op.or]: productQuery
-      }
-    })
+  like(rawQuery) {
+    this.query =  {
+      where: new QueryBuilder(rawQuery).iLike()
+    }
+    this.queryMethod = this.store.Product.findAll
+    return this
   }
 
-  async createProduct(productInput) {
-    return await this.store.Product.create(productInput)
+  where(productQuery) {
+    this.query = {
+      where: new QueryBuilder(productQuery).Or()
+    }
+    this.queryMethod = this.store.Product.findAll
+    return this
+  }
+
+  createProduct(productInput) {
+    return this.store.Product.create(productInput)
   }
   
   async findOrCreateProduct({ id: idArg } = {}) {

@@ -3,8 +3,10 @@ const Query = {
    await dataSources.userApi.where( userQuery )
   ),
 
-  products: async (_, { productQuery }, { dataSources }) => (
+  products: async (_, { userQuery, ...productQuery }, { dataSources }) => (
     await dataSources.productApi.like( productQuery )
+                                .include({users: userQuery})
+                                .runQuery()
   ),
 
   loginJWT: async (_, { auth_token }, { dataSources }) => (
