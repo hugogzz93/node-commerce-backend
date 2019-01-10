@@ -1,10 +1,14 @@
 const Query = {
-  users: async (_, { userQuery }, { dataSources }) => (
-   await dataSources.userApi.where( userQuery )
+  users: async (_, { userQuery }, { dataSources: { userApi} }) => (
+    await userApi.query().where({...userQuery})
   ),
 
-  products: async (_, { userQuery, ...productQuery }, { dataSources }) => (
-    await dataSources.productApi.like( productQuery ).runQuery()
+  products: async (_, { productQuery }, { dataSources: { productApi }}) => (
+    await productApi.query().where(builder => (
+      productQuery && productQuery.id ? builder.where({id: productQuery.id}) : builder
+    )).andWhere(builder => (
+      productQuery && productQuery.name ? builder.where('name', 'ilike', `%${productQuery.name}%`) : builder
+    ))
   ),
 
   loginJWT: async (_, { auth_token }, { dataSources }) => (
@@ -16,39 +20,65 @@ const Mutation = {
   login: async (_, { email, password }, { dataSources }) => {
     return await dataSources.sessionApi.login({email, password})
   },
-  
-  createProduct: async (_, input, { dataSources }) => {
-    return await dataSources.productApi.createProduct(input);
+
+  createProduct: async (_, {productInput}, { dataSources }) => {
+    return await dataSources.productApi.create(productInput);
   },
 
-  createUser: async (_, input, { dataSources }) => {
-    return await dataSources.userApi.createUser(input.userInput)
+  createUser: async (_, { userInput }, { dataSources }) => {
+    return await dataSources.userApi.create(userInput)
   },
 
-  updateUser: async (_, input, { dataSources, token }) => {
-    return await dataSources.userApi.updateUser(input.userQuery,
-                                                input.userInput,
-                                                {auth_token: token})
-  },
-  
-  updateUserProducts: async (_, input, {dataSources: {userApi, productApi}, token }) => {
-    try {
-      const user = await userApi.find({auth_token: token})
-      const addedProducts = await productApi.where(input.productAdditions)
-      const removedProducts = await productApi.where(input.productRemovals)
-      await user.addProducts(addedProducts)
-      await user.removeProducts(removedProducts)
-      return await user.getProducts()
-    } catch(e) {
-      return e
-    }
-  }
+  user: async (_, {id}, { dataSources: {userApi} }) => (
+    await userApi.query().where({id}).first()
+  ),
+
+  product: async (_, {id}, { dataSources: {productApi} }) => (
+    await productApi.query().where({id}).first()
+  ),
+
 }
 
 const Product = {
-  users: async (product, query) => {
-    return await product.getUsers(query)
+  users: async (product, {userQuery = {}}) => {
+    const {id = null, ...query} = userQuery
+    if(id)
+      query.user_id = id
+    return await product.$relatedQuery('users').where(query)
   }
 }
 
-export default { Query, Mutation, Product }
+const User = {
+  products: async (user, {productQuery = {}}) => {
+    const {id = null, ...query} = productQuery;
+    if(id)
+      productQuery.product_id = id
+    return await user.$relatedQuery('products').where(query)
+  }
+}
+
+const UserOps = {
+  addProducts: async (user, {ids}, {dataSources: {userApi, ProductApi}}) => (
+    (await user.$relatedQuery('products').relate(ids) ).length
+  ),
+  removeProducts: async (user, {ids}, dataSources) => (
+    await user.$relatedQuery('products').unrelate().whereIn('products.id', ids)
+  ),
+  updateUser: async (user, {input}, { dataSources: { userApi }, viewer}) => {
+    if(user.allowsModificationFrom(viewer))
+      return await userApi.query().patchAndFetchById(user.id, input)
+    else
+      return null
+  }
+}
+
+const ProductOps = {
+  updateProduct: async (product, {input}, {dataSources: {productApi}, viewer}) => {
+    if(product.allowsModificationFrom(viewer))
+      return await productApi.query().patchAndFetchById(product.id, input)
+    else
+      return null
+  }
+}
+
+export default { Query, Mutation, Product, User, UserOps, ProductOps }

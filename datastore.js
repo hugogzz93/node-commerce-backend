@@ -1,33 +1,11 @@
-import sequelize from 'sequelize'
-import { createUser } from './models/user'
-import { createProduct } from './models/product'
-// import { createUserProducts } from './models/userproduct'
+import knex from 'knex'
+import { Model } from 'objection'
+import connection from './knexfile'
+import User from './models/user'
+import Product from './models/product'
 
-const createStore = () => {
-  const connection = new sequelize('dev_search', 'hugo', '', {
-    dialect: 'postgres'
-  })
+const knexConnection = knex(connection)
+Model.knex(knexConnection)
 
-  const Product = createProduct(connection, sequelize)
-  const User = createUser(connection, sequelize)
-  // const UserProducts = createUserProducts(connection, sequelize)
-  
-  User.belongsToMany(Product, {
-    through: 'UserProducts',
-    foreignKey: 'user_id',
-    otherKey: 'product_id',
-    as: 'products'
-  })
+export default { User, Product };
 
-  Product.belongsToMany(User, {
-    through: 'UserProducts',
-    foreignKey: 'product_id',
-    otherKey: 'user_id',
-    as: 'users'
-  })
-
-  return { User, Product, models: connection.models }
-
-}
-
-export { createStore };

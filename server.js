@@ -4,21 +4,20 @@ import resolvers from './resolvers'
 import UserApi from './datasources/UserApi'
 import ProductApi from './datasources/ProductApi'
 import SessionApi from './datasources/SessionApi'
-import { createStore } from './datastore'
+import knex from 'knex'
+import connection from './knexfile'
+import store from './datastore'
 
-const store = createStore()
-// store.User.findAll().then(async r => {
-//   r.forEach(r => r.update({password: 'test'}))
-// })
+const dataSources = {
+  userApi: new UserApi({ store }),
+  productApi: new ProductApi({ store }),
+  sessionApi: new SessionApi({ store })
+}
 
 const server = new ApolloServer({ 
   typeDefs,
   resolvers,
-  dataSources: () => ({
-    userApi: new UserApi({ store }),
-    productApi: new ProductApi({ store }),
-    sessionApi: new SessionApi({ store })
-  }),
+  dataSources: () => dataSources,
   formatError: error => {
     console.log(error);
     return error;
@@ -27,9 +26,10 @@ const server = new ApolloServer({
     console.log(response);
     return response;
   },
-  context: ({req}) => {
+  context: async ({req}) => {
     const token = req.headers.authorization || ''
-    return { token }
+    const viewer = await dataSources.sessionApi.findByAuthToken(token)
+    return { viewer }
   }
 })
 

@@ -29,22 +29,20 @@ const typeDefs = gql`
     street_number: String
     zipcode: String
     description: String
-    products: [Product]!
+    products(productQuery: ProductQuery, productInput: ProductInput): [Product]!
   }
 
   type Mutation {
     login(email: String!, password: String!): User
-    createProduct(productInput: ProductInput!): Product
-    createUser(userInput: UserInput!): User
-    updateUser(userQuery: UserQuery!,
-               userInput: UserInput!): User,
-    updateUserProducts(productAdditions: [ProductQuery],
-                       productRemovals: [ProductQuery]): [Product]!
+    createProduct(input: ProductInput!): Product
+    createUser(input: UserInput!): User
+    user(id: ID): UserOps,
+    product(id: ID): ProductOps
   }
 
   input ProductInput {
-    name: String!
-    description: String!
+    name: String
+    description: String
   }
 
   input UserInput {
@@ -64,7 +62,6 @@ const typeDefs = gql`
   input ProductQuery {
     id: ID
     name: String
-    description: String
   }
 
   input UserQuery {
@@ -81,6 +78,16 @@ const typeDefs = gql`
 
   input Viewer {
     auth_token: String!
+  }
+
+  type UserOps {
+    addProducts(ids: [ID]!): Int
+    removeProducts(ids: [ID]!): Int
+    updateUser(input: UserInput!): User
+  }
+
+  type ProductOps {
+    updateProduct(input: ProductInput!): Product
   }
 `
 export {typeDefs}

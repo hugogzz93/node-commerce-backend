@@ -13,22 +13,23 @@ export default class SessionApi extends DataSource {
   }
 
   async login({email, password}) {
-    let user = await this.store.User.find({where: {email}})
+    const user = await this.store.User.query().where({email}).first()
     if(!user) return null
 
-    const match = await bcrypt.compare(password, user.dataValues.password);
+    const match = await bcrypt.compare(password, user.password);
     if(!match) return null
 
-    return await this.setNewAuthToken(user)
+    const auth_token = await this.getNewAuthTokenFor(user)
+    return await user.constructor.query()
+                                 .patchAndFetchById(user.id, {auth_token})
   }
 
-  async findByAuthToken(auth_token) {
-    return await this.store.User.find({where: {auth_token}})
+  findByAuthToken(auth_token) {
+    return this.store.User.query().where({auth_token}).first()
   }
 
-  async setNewAuthToken(user) {
-    const auth_token = await bcrypt.hash(`user:${user.id}${new Date()}`, 1)
-    return await user.update({auth_token})
+  getNewAuthTokenFor(user) {
+    return bcrypt.hash(`user:${user.id}${new Date()}`, 1)
   }
 }
 
