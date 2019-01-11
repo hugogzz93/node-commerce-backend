@@ -1,13 +1,13 @@
 const Query = {
-  users: async (_, { userQuery }, { dataSources: { userApi} }) => (
-    await userApi.query().where({...userQuery})
+  users: async (_, { query = {} }, { dataSources: { userApi} }) => (
+    await userApi.query().where(query)
   ),
 
-  products: async (_, { productQuery }, { dataSources: { productApi }}) => (
+  products: async (_, { query }, { dataSources: { productApi }}) => (
     await productApi.query().where(builder => (
-      productQuery && productQuery.id ? builder.where({id: productQuery.id}) : builder
+      query && query.id ? builder.where({id: query.id}) : builder
     )).andWhere(builder => (
-      productQuery && productQuery.name ? builder.where('name', 'ilike', `%${productQuery.name}%`) : builder
+      query && query.name ? builder.where('name', 'ilike', `%${query.name}%`) : builder
     ))
   ),
 
@@ -40,11 +40,11 @@ const Mutation = {
 }
 
 const Product = {
-  users: async (product, {userQuery = {}}) => {
-    const {id = null, ...query} = userQuery
+  users: async (product, {query = {}}) => {
+    const {id = null, ...userQuery} = query
     if(id)
-      query.user_id = id
-    return await product.$relatedQuery('users').where(query)
+      userQuery.user_id = id
+    return await product.$relatedQuery('users').where(userQuery)
   }
 }
 
@@ -58,11 +58,16 @@ const User = {
 }
 
 const UserOps = {
-  addProducts: async (user, {ids}, {dataSources: {userApi, ProductApi}}) => (
-    (await user.$relatedQuery('products').relate(ids) ).length
+  addProducts: (user, {ids}, {dataSources: {userApi, ProductApi}}) => (
+    user.$relatedQuery('products').relate(ids).then( async () =>
+      user.$relatedQuery('products')
+          .whereIn('products.id', ids)
+          .select('products.id')
+          .map(p => p.id)
+    )
   ),
-  removeProducts: async (user, {ids}, dataSources) => (
-    await user.$relatedQuery('products').unrelate().whereIn('products.id', ids)
+  removeProducts: (user, {ids}, dataSources) => (
+    user.$relatedQuery('products').unrelate().whereIn('products.id', ids)
   ),
   updateUser: async (user, {input}, { dataSources: { userApi }, viewer}) => {
     if(user.allowsModificationFrom(viewer))

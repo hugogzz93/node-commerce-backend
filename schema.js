@@ -3,15 +3,15 @@ import { gql } from 'apollo-server'
 const typeDefs = gql`
 
   type Query {
-    products(productQuery: ProductQuery): [Product]!
-    users(userQuery: UserQuery): [User]!
+    products(query: ProductQuery): [Product]!
+    users(query: UserQuery): [User]!
     loginJWT(auth_token: String!): User
   }
 
   type Product {
     id: ID!
     name: String
-    users(userQuery: UserQuery): [User]
+    users(query: UserQuery): [User]
     description: String
   }
 
@@ -81,7 +81,7 @@ const typeDefs = gql`
   }
 
   type UserOps {
-    addProducts(ids: [ID]!): Int
+    addProducts(ids: [ID]!): [ID]!
     removeProducts(ids: [ID]!): Int
     updateUser(input: UserInput!): User
   }
