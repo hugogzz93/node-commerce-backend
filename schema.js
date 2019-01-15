@@ -82,7 +82,7 @@ const typeDefs = gql`
 
   type UserOps {
     addProducts(ids: [ID]!): [ID]!
-    removeProducts(ids: [ID]!): Int
+    removeProducts(ids: [ID]!): [ID]!
     updateUser(input: UserInput!): User
   }
 

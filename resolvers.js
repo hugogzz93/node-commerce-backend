@@ -66,9 +66,11 @@ const UserOps = {
           .map(p => p.id)
     )
   ),
-  removeProducts: (user, {ids}, dataSources) => (
-    user.$relatedQuery('products').unrelate().whereIn('products.id', ids)
-  ),
+  removeProducts: async (user, {ids}, dataSources) => {
+    await user.$relatedQuery('products').unrelate().whereIn('products.id', ids)
+    const pids = await user.$relatedQuery('products').then(p => p.map(e => e.id))
+    return ids.filter(id => !pids.includes(id))
+  },
   updateUser: async (user, {input}, { dataSources: { userApi }, viewer}) => {
     if(user.allowsModificationFrom(viewer))
       return await userApi.query().patchAndFetchById(user.id, input)
