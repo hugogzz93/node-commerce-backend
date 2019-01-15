@@ -24,8 +24,18 @@ export default class SessionApi extends DataSource {
                                  .patchAndFetchById(user.id, {auth_token})
   }
 
+  async logout({auth_token}) {
+    const user = await this.store.User.query().where({email}).first()
+    if(!user) return false
+
+    await user.constructor.query().patchAndFetchById(user.id, {auth_token: null})
+  }
+
   findByAuthToken(auth_token) {
-    return this.store.User.query().where({auth_token}).first()
+    if(auth_token)
+      return this.store.User.query().where({auth_token}).first()
+    else
+      null
   }
 
   getNewAuthTokenFor(user) {

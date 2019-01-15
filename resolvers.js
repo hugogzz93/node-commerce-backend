@@ -21,6 +21,10 @@ const Mutation = {
     return await dataSources.sessionApi.login({email, password})
   },
 
+  logout: (_, { auth_token }, { dataSources }) => (
+    dataSources.sessionApi.logout({auth_token})
+  ),
+
   createProduct: async (_, {productInput}, { dataSources }) => {
     return await dataSources.productApi.create(productInput);
   },
