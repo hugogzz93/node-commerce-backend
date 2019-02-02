@@ -36,6 +36,14 @@ export default class User extends Model {
         from: 'users.id',
         to: 'user_product_items.user_id'
       }
+    },
+    orders: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/order`,
+      join: {
+        from: 'users.id',
+        to: 'orders.id'
+      }
     }
   }
 
