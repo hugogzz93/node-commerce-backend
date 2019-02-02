@@ -1,44 +1,46 @@
+import FileManager from './lib/FileManager'
+
 const Query = {
-  users: async (_, { query = {} }, { dataSources: { userApi} }) => (
-    await userApi.query().where(query)
+  users: (_, { query = {} }, { dataSources: { userApi} }) => (
+    userApi.query().where(query)
   ),
 
-  products: async (_, { query }, { dataSources: { productApi }}) => (
-    await productApi.query().where(builder => (
+  products: (_, { query }, { dataSources: { productApi }}) => (
+    productApi.query().where(builder => (
       query && query.id ? builder.where({id: query.id}) : builder
     )).andWhere(builder => (
       query && query.name ? builder.where('name', 'ilike', `%${query.name}%`) : builder
     ))
   ),
 
-  loginJWT: async (_, { auth_token }, { dataSources }) => (
-    await dataSources.sessionApi.findByAuthToken(auth_token)
+  loginJWT: (_, { auth_token }, { dataSources }) => (
+    dataSources.sessionApi.findByAuthToken(auth_token)
   )
 }
 
 const Mutation = {
-  login: async (_, { email, password }, { dataSources }) => {
-    return await dataSources.sessionApi.login({email, password})
-  },
+  login: (_, { email, password }, { dataSources }) => (
+    dataSources.sessionApi.login({email, password})
+  ),
 
   logout: (_, { auth_token }, { dataSources }) => (
     dataSources.sessionApi.logout({auth_token})
   ),
 
-  createProduct: async (_, {productInput}, { dataSources }) => {
-    return await dataSources.productApi.create(productInput);
-  },
-
-  createUser: async (_, { userInput }, { dataSources }) => {
-    return await dataSources.userApi.create(userInput)
-  },
-
-  user: async (_, {id}, { dataSources: {userApi} }) => (
-    await userApi.query().where({id}).first()
+  createProduct: (_, {productInput}, { dataSources }) => (
+    dataSources.productApi.create(productInput)
   ),
 
-  product: async (_, {id}, { dataSources: {productApi} }) => (
-    await productApi.query().where({id}).first()
+  createUser: (_, { userInput }, { dataSources }) => (
+    dataSources.userApi.create(userInput)
+  ),
+
+  user: (_, {id}, { dataSources: {userApi} }) => (
+    userApi.query().where({id}).first()
+  ),
+
+  product: (_, {id}, { dataSources: {productApi} }) => (
+    productApi.query().where({id}).first()
   ),
 
 }
@@ -53,11 +55,14 @@ const Product = {
 }
 
 const User = {
-  products: async (user, {productQuery = {}}) => {
+  products: (user, {productQuery = {}}) => {
     const {id = null, ...query} = productQuery;
     if(id)
-      productQuery.product_id = id
-    return await user.$relatedQuery('products').where(query)
+      query.product_id = id
+    return user.$relatedQuery('products').where(query)
+  },
+  userProducts: (user, {query}) => {
+    return user.$relatedQuery('userProducts').where(query)
   }
 }
 
@@ -70,25 +75,50 @@ const UserOps = {
           .map(p => p.id)
     )
   ),
-  removeProducts: async (user, {ids}, dataSources) => {
+  removeProducts: async (user, {ids}, {dataSources}) => {
     await user.$relatedQuery('products').unrelate().whereIn('products.id', ids)
     const pids = await user.$relatedQuery('products').then(p => p.map(e => e.id))
     return ids.filter(id => !pids.includes(id))
   },
-  updateUser: async (user, {input}, { dataSources: { userApi }, viewer}) => {
+  updateUser: (user, {input}, { dataSources: { userApi }, viewer}) => {
     if(user.allowsModificationFrom(viewer))
-      return await userApi.query().patchAndFetchById(user.id, input)
+      return userApi.query().patchAndFetchById(user.id, input)
+    else
+      return null
+  },
+  createUserProduct: async (user, { input: {product_id, name, price, image} }, {dataSources}) => {
+    const {stream, filename, mimetype, encoding} = await image
+    return await FileManager
+      .uploadFileForUser({id: user.id, filename, file: stream  })
+      .then(async ref => {
+        return await user.$relatedQuery('userProducts').insert({user_id: user.id, product_id: product_id, name, image: filename, price})
+      })
+  },
+  updateUserProduct: async (user, { input: {id, image, ..._input} }, { dataSources }) => {
+    if(image) {
+      user.$relatedQuery('userProducts').where({id: id}).select('image')
+          .then(([userProduct]) => FileManager.removeFileForUser({id: user.id, filename: userProduct.image}))
+      const {stream, filename, mimetype, encoding} = await image
+      console.log('filename', filename)
+      await FileManager.uploadFileForUser({id: user.id, filename, file: stream})
+      return await user.$relatedQuery('userProducts').patchAndFetchById(id, {..._input, image: filename})
+    }
+    return await user.$relatedQuery('userProducts').patchAndFetchById(id, {..._input})
+  }
+}
+
+const ProductOps = {
+  updateProduct: (product, {input}, {dataSources: {productApi}, viewer}) => {
+    if(product.allowsModificationFrom(viewer))
+      return productApi.query().patchAndFetchById(product.id, input)
     else
       return null
   }
 }
 
-const ProductOps = {
-  updateProduct: async (product, {input}, {dataSources: {productApi}, viewer}) => {
-    if(product.allowsModificationFrom(viewer))
-      return await productApi.query().patchAndFetchById(product.id, input)
-    else
-      return null
+const UserProductOps = {
+  update: (userProduct, { input }, { dataSources }) => {
+    userProduct
   }
 }
 

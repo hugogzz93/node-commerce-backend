@@ -18,4 +18,8 @@ export default class UserAPI extends DataSource {
     return this.store.User.query().insert(input)
   }
 
+  createUserProductItem(input) {
+    return this.store.UserProduct.query().insert(input)
+  }
+
 }

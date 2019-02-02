@@ -36,6 +36,10 @@ const dataSources = {
 //                   .then(res => console.log('tets0a'))
 //                   .catch(err => console.log('err', err))
 
+// store.User.query({id: 1}).then(us => {
+//   console.log(us)
+// })
+
 const server = new ApolloServer({ 
   typeDefs,
   resolvers,
