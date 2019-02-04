@@ -13,6 +13,12 @@ const Query = {
     ))
   ),
 
+  userProducts: (_, { ids }, { dataSources }) => (
+    dataSources.userProductApi.query().where(builder => (
+      ids ? builder.whereIn('id', ids) : builder
+    ))
+  ),
+
   loginJWT: (_, { auth_token }, { dataSources }) => (
     dataSources.sessionApi.findByAuthToken(auth_token)
   )

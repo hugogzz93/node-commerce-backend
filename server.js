@@ -4,6 +4,7 @@ import resolvers from './resolvers'
 import UserApi from './datasources/UserApi'
 import ProductApi from './datasources/ProductApi'
 import SessionApi from './datasources/SessionApi'
+import UserProductApi from './datasources/UserProductApi'
 import knex from 'knex'
 import connection from './knexfile'
 import store from './datastore'
@@ -14,7 +15,8 @@ import express from 'express'
 const dataSources = {
   userApi: new UserApi({ store }),
   productApi: new ProductApi({ store }),
-  sessionApi: new SessionApi({ store })
+  sessionApi: new SessionApi({ store }),
+  userProductApi: new UserProductApi({store}),
 }
 
 // var data = fs.readFileSync('/Users/hugo/Desktop/Test.png');
