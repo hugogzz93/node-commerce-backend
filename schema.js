@@ -131,11 +131,11 @@ const typeDefs = gql`
 
  input OrderInput {
   user_id: ID!
-  orderItems: [OrderItemInput]!
+  order_items: [OrderItemInput]!
  }
 
  input OrderItemInput {
-  userProductId: ID!
+  user_product_id: ID!
   amount: Int!
  }
 

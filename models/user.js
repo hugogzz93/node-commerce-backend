@@ -42,7 +42,7 @@ export default class User extends Model {
       modelClass: `${__dirname}/order`,
       join: {
         from: 'users.id',
-        to: 'orders.id'
+        to: 'orders.user_id'
       }
     }
   }
