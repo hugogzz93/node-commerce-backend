@@ -9,20 +9,22 @@ exports.up = function(knex, Promise) {
       table.timestamp('createdAt')
       table.timestamp('updatedAt')
     }),
-    knex.schema.createTable('orders_user_product_items', table => {
+    knex.schema.createTable('order_items', table => {
       table.increments('id').primary()
       table.integer('order_id')
       table.integer('user_product_item_id')
-      table.foreign('order_id').references('orders.id')
-      table.foreign('user_product_item_id').references('user_product_items.id')
+      table.float('price')
+      table.integer('amount')
+      table.foreign('order_id').references('orders.id').onDelete('cascade')
+      table.foreign('user_product_item_id').references('user_product_items.id').onDelete('set null')
     })
   ])
 };
 
 exports.down = function(knex, Promise) {
   return Promise.all([
-    knex.schema.dropTable('orders'),
-    knex.schema.dropTable('orders_user_product_items')
+    knex.schema.dropTable('order_items'),
+    knex.schema.dropTable('orders')
   ])
   
 };

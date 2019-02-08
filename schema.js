@@ -32,6 +32,20 @@ const typeDefs = gql`
     description: String
     products(productQuery: ProductQuery): [Product]!
     userProducts(query: UserProductQuery): [UserProduct]!
+    orders: OrderViewer
+  }
+
+  type Order {
+    id: ID!
+    user_id: ID!
+    total: Float
+    orderItems(ids: [ID]): [OrderItem]!
+    user: User!
+  }
+
+  type OrderViewer {
+    createdOrders(query: OrderQuery): [Order]!
+    attendingOrders(query: OrderQuery): [Order]!
   }
 
   type UserProduct {
@@ -43,6 +57,13 @@ const typeDefs = gql`
     image: String
   }
 
+  type OrderItem {
+    id: ID!
+    price: Float!
+    amount: Int!
+    userProduct: UserProduct!
+  }
+
   type Mutation {
     login(email: String!, password: String!): User
     logout(auth_token: String!): Boolean
@@ -50,6 +71,7 @@ const typeDefs = gql`
     createUser(input: UserInput!): User
     user(id: ID): UserOps,
     product(id: ID): ProductOps
+    order(id: ID): OrderOps
   }
 
   type File {
@@ -103,6 +125,20 @@ const typeDefs = gql`
     name: String
   }
 
+  input OrderQuery {
+    id: ID
+  }
+
+ input OrderInput {
+  user_id: ID!
+  orderItems: [OrderItemInput]!
+ }
+
+ input OrderItemInput {
+  userProductId: ID!
+  amount: Int!
+ }
+
   type ProductConnection {
     cursor: String!
     hasMore: Boolean!
@@ -123,6 +159,11 @@ const typeDefs = gql`
 
   type ProductOps {
     updateProduct(input: ProductInput!): Product
+  }
+
+  type OrderOps {
+    updateOrder(input: OrderInput!): Order
+    createOrder(input: OrderInput!): Order
   }
 
 `

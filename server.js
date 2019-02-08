@@ -4,6 +4,7 @@ import resolvers from './resolvers'
 import UserApi from './datasources/UserApi'
 import ProductApi from './datasources/ProductApi'
 import SessionApi from './datasources/SessionApi'
+import OrderApi from './datasources/OrderApi'
 import UserProductApi from './datasources/UserProductApi'
 import knex from 'knex'
 import connection from './knexfile'
@@ -16,6 +17,7 @@ const dataSources = {
   userApi: new UserApi({ store }),
   productApi: new ProductApi({ store }),
   sessionApi: new SessionApi({ store }),
+  orderApi: new OrderApi({store}),
   userProductApi: new UserProductApi({store}),
 }
 

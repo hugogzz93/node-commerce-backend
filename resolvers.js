@@ -49,6 +49,9 @@ const Mutation = {
     productApi.query().where({id}).first()
   ),
 
+  order: (_, { id }, { dataSources: { orderApi }}) => (
+    id ? orderApi.query().where({id}).first() : {}
+  ),
 }
 
 const Product = {
@@ -69,7 +72,10 @@ const User = {
   },
   userProducts: (user, {query}) => {
     return user.$relatedQuery('userProducts').where(query)
-  }
+  },
+  orders: (user, {query = null}) => (
+    user
+  )
 }
 
 const UserOps = {
@@ -128,4 +134,50 @@ const UserProductOps = {
   }
 }
 
-export default { Query, Mutation, Product, User, UserOps, ProductOps }
+const OrderViewer = {
+  createdOrders: (user, { query = {} } ) => (
+    user.$relatedQuery('orders').where(query)
+  )
+}
+
+const Order = {
+  orderItems: (order, {ids = null}) => (
+    order.$relatedQuery('orderItems').where(builder =>
+      ids ? builder.whereIn('id', ids) : builder
+    )
+  ),
+  user: (order) => (
+    order.$relatedQuery('user')
+  )
+}
+
+const OrderItem = {
+  userProduct: (orderItem) => (
+    orderItem.$relatedQuery('userProduct')
+  )
+}
+
+const OrderOps = {
+  createOrder: (_, {input}, { dataSources: { orderApi } }) => (
+    orderApi.create(input)
+  ),
+  updateOrder: (order, {input}, {dataSources: orderApi}, { viewer }) => {
+    if(order.allowsModificationFrom(viewer))
+      return orderApi.query().patchAndFetchById(ordor.id, input)
+    else
+      return null
+  }
+}
+
+export default { 
+   Query,
+   Mutation,
+   Product,
+   User,
+   UserOps,
+   ProductOps,
+   Order,
+   OrderOps,
+   OrderViewer,
+   OrderItem,
+ }
