@@ -36,4 +36,13 @@ export default class Order extends Model {
       return false
     }
   }
+
+  async $beforeInsert(context) {
+    this.createdAt = new Date()
+    this.updatedAt = new Date()
+  }
+
+  async $beforeUpdate(context) {
+    this.updatedAt = new Date()
+  }
 }

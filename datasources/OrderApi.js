@@ -1,4 +1,5 @@
 import { DataSource } from 'apollo-datasource'
+import { transaction } from 'objection'
 
 export default class OrderAPI extends DataSource {
   constructor({ store }) {
@@ -15,20 +16,22 @@ export default class OrderAPI extends DataSource {
   }
 
   async create(input) {
-    const userProducts = await this.store.UserProduct.query().whereIn('id', input.order_items.map(e => e.user_product_id))
-    const total = userProducts.reduce((sum, e) => sum + e.price * input.order_items.find(i => e.id == i.user_product_id).amount, 0)
-    console.log('input:', input)
-    const order = await this.store.Order.query().insert({user_id: input.user_id, total: total})
-    input.order_items.forEach(async orderItemInput => {
-      const userProduct = userProducts.find(e => e.id == orderItemInput.user_product_id)
-      if(!userProduct) return
-      await order.$relatedQuery('orderItems').insert({
-        order_id: order.id,
-        user_product_item_id: orderItemInput.user_product_id,
-        amount: orderItemInput.amount,
-        price: userProduct.price
-      })
+    return await transaction(this.store.Order.knex(), async trx => {
+      const userProducts = await this.store.UserProduct.query(trx).whereIn('id', input.order_items.map(e => e.user_product_id))
+      const total = userProducts.reduce((sum, e) => sum + e.price * input.order_items.find(i => e.id == i.user_product_id).amount, 0)
+      const order = await this.store.Order.query(trx).insert({user_id: input.user_id, total: total})
+
+      for ( const itemInput of input.order_items ) {
+        const userProduct = userProducts.find(e => e.id == itemInput.user_product_id)
+        if(!userProduct) throw 'userProduct not found'
+        await order.$relatedQuery('orderItems', trx).insert({
+          order_id: order.id,
+          user_product_item_id: itemInput.user_product_id,
+          amount: itemInput.amount,
+          price: userProduct.price
+        })
+      }
+      return order
     })
-    return order
   }
 }
