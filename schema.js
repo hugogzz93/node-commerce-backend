@@ -41,6 +41,8 @@ const typeDefs = gql`
     total: Float
     orderItems(ids: [ID]): [OrderItem]!
     user: User!
+    status: String
+    createdAt: String
   }
 
   type OrderViewer {
@@ -61,6 +63,7 @@ const typeDefs = gql`
     id: ID!
     price: Float!
     amount: Int!
+    status: String
     userProduct: UserProduct!
   }
 
@@ -130,6 +133,7 @@ const typeDefs = gql`
   }
 
  input OrderInput {
+  status: String
   user_id: ID!
   order_items: [OrderItemInput]!
  }
@@ -137,6 +141,7 @@ const typeDefs = gql`
  input OrderItemInput {
   user_product_id: ID!
   amount: Int!
+   status: String
  }
 
   type ProductConnection {

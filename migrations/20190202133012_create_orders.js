@@ -3,6 +3,7 @@ exports.up = function(knex, Promise) {
   return Promise.all([
     knex.schema.createTable('orders', table => {
       table.increments('id').primary()
+      table.enu('status', ['in_progress', 'completed', 'canceled']).default('in_progress')
       table.integer('user_id')
       table.float('total')
       table.foreign('user_id').references('users.id')
@@ -15,6 +16,7 @@ exports.up = function(knex, Promise) {
       table.integer('user_product_item_id')
       table.float('price')
       table.integer('amount')
+      table.enu('status', ['pending_mail','transit', 'delivered', 'canceled']).default('pending_mail')
       table.foreign('order_id').references('orders.id').onDelete('cascade')
       table.foreign('user_product_item_id').references('user_product_items.id').onDelete('set null')
     })
