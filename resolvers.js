@@ -161,11 +161,20 @@ const OrderOps = {
   createOrder: (_, {input}, { dataSources: { orderApi } }) => (
     orderApi.create(input)
   ),
-  updateOrder: (order, {input}, {dataSources: orderApi}, { viewer }) => {
+  updateOrder: (order, {input}, {dataSources: {orderApi}}, { viewer }) => {
     if(order.allowsModificationFrom(viewer))
       return orderApi.query().patchAndFetchById(ordor.id, input)
     else
       return null
+  },
+  createIssue: (order, {input}) => {
+    return order.createIssue(input)
+  }
+}
+
+const Issue = {
+  messages: (issue, _, { dataSources: { issueApi}}, { viewer }) => {
+    return issue.$relatedQuery('messages')
   }
 }
 
@@ -180,4 +189,5 @@ export default {
    OrderOps,
    OrderViewer,
    OrderItem,
+   Issue,
  }

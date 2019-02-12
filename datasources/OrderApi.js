@@ -12,7 +12,7 @@ export default class OrderAPI extends DataSource {
   }
 
   query() {
-    return this.store.User.query()
+    return this.store.Order.query()
   }
 
   async create(input) {

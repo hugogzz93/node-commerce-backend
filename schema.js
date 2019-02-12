@@ -132,17 +132,42 @@ const typeDefs = gql`
     id: ID
   }
 
- input OrderInput {
-  status: String
-  user_id: ID!
-  order_items: [OrderItemInput]!
- }
+  input OrderInput {
+    status: String
+    user_id: ID!
+    order_items: [OrderItemInput]!
+  }
 
- input OrderItemInput {
-  user_product_id: ID!
-  amount: Int!
-   status: String
- }
+  input OrderItemInput {
+    user_product_id: ID!
+    amount: Int!
+    status: String
+  }
+
+  type Issue {
+    id: ID!
+    order_item_id: ID!
+    status: String!
+    createdAt: String!
+    messages: [IssueMessage]!
+  }
+
+  type IssueMessage {
+    id: ID!
+    author_id: ID!
+    issue_id: ID!
+    body: String!
+  }
+
+  input IssueInput {
+    order_item_id: ID!
+    messages: [IssueMessageInput]
+  }
+
+  input IssueMessageInput {
+    author_id: ID!
+    body: String
+  }
 
   type ProductConnection {
     cursor: String!
@@ -169,6 +194,7 @@ const typeDefs = gql`
   type OrderOps {
     updateOrder(input: OrderInput!): Order
     createOrder(input: OrderInput!): Order
+    createIssue(input: IssueInput!): Issue
   }
 
 `

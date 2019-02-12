@@ -1,5 +1,5 @@
-import { Model } from 'objection'
-import User from './user'
+import { Model, transaction } from 'objection'
+import Issue from './issue'
 
 export default class Order extends Model {
   static tableName = 'orders'
@@ -35,6 +35,10 @@ export default class Order extends Model {
       console.log('error', e)
       return false
     }
+  }
+
+  async createIssue(input) {
+    return await Issue.query().insertGraph(input)
   }
 
   async $beforeInsert(context) {

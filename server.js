@@ -6,6 +6,7 @@ import ProductApi from './datasources/ProductApi'
 import SessionApi from './datasources/SessionApi'
 import OrderApi from './datasources/OrderApi'
 import UserProductApi from './datasources/UserProductApi'
+import IssueApi from './datasources/IssueApi'
 import knex from 'knex'
 import connection from './knexfile'
 import store from './datastore'
@@ -19,30 +20,8 @@ const dataSources = {
   sessionApi: new SessionApi({ store }),
   orderApi: new OrderApi({store}),
   userProductApi: new UserProductApi({store}),
+  issueApi: new UserApi({store}),
 }
-
-// var data = fs.readFileSync('/Users/hugo/Desktop/Test.png');
-// FileManager.uploadFile({bucket: 'halo', filename: 'dacara', file: data}).then(suc => console.log('added:', suc))
-
-// const bucket = 'test'
-// minioClient.makeBucket(bucket, 'us-east-1', function(err) {
-//   if (err) return console.log('Error creating bucket.', err)
-//   console.log('Bucket created successfully in "us-east-1".')
-// })
-
-// var data = fs.readFileSync('/Users/hugo/Desktop/Test.png');
-// minioClient.putObject(bucket, 'hello-file', data, function(err, etag) {
-//   return console.log(err, etag) // err should be null
-// })
-
-
-// store.User.query().patch({password: 'test'})
-//                   .then(res => console.log('tets0a'))
-//                   .catch(err => console.log('err', err))
-
-// store.User.query({id: 1}).then(us => {
-//   console.log(us)
-// })
 
 const server = new ApolloServer({ 
   typeDefs,
