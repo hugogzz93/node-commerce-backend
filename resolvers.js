@@ -19,9 +19,15 @@ const Query = {
     ))
   ),
 
+  orders: (_, { ids }, { dataSources: { orderApi }}) => (
+    orderApi.query().where(builder => (
+      ids ? builder.whereIn('id', ids) : builder
+    ))
+  ),
+
   loginJWT: (_, { auth_token }, { dataSources }) => (
     dataSources.sessionApi.findByAuthToken(auth_token)
-  )
+  ),
 }
 
 const Mutation = {
@@ -128,10 +134,10 @@ const ProductOps = {
   }
 }
 
-const UserProductOps = {
-  update: (userProduct, { input }, { dataSources }) => {
-    userProduct
-  }
+const UserProduct = {
+  user: (userProduct) => (
+    userProduct.$relatedQuery('user')
+  )
 }
 
 const OrderViewer = {
@@ -154,6 +160,9 @@ const Order = {
 const OrderItem = {
   userProduct: (orderItem) => (
     orderItem.$relatedQuery('userProduct')
+  ),
+  issues: (orderItem) => (
+    orderItem.$relatedQuery('issues')
   )
 }
 
@@ -168,6 +177,7 @@ const OrderOps = {
       return null
   },
   createIssue: (order, {input}) => {
+    console.log('there')
     return order.createIssue(input)
   }
 }
@@ -183,9 +193,10 @@ export default {
    Mutation,
    Product,
    User,
+   Order,
+   UserProduct,
    UserOps,
    ProductOps,
-   Order,
    OrderOps,
    OrderViewer,
    OrderItem,

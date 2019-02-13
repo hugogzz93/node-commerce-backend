@@ -6,6 +6,7 @@ const typeDefs = gql`
     products(query: ProductQuery): [Product]!
     users(query: UserQuery): [User]!
     userProducts(ids: [ID]): [UserProduct]!
+    orders(ids: [ID]): [Order]!
     loginJWT(auth_token: String!): User
   }
 
@@ -57,6 +58,7 @@ const typeDefs = gql`
     name: String!
     price: Float!
     image: String
+    user: User!
   }
 
   type OrderItem {
@@ -65,6 +67,7 @@ const typeDefs = gql`
     amount: Int!
     status: String
     userProduct: UserProduct!
+    issues: [Issue]!
   }
 
   type Mutation {

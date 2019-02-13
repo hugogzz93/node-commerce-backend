@@ -28,6 +28,14 @@ export default class OrderItem extends Model {
         from: 'order_items.user_product_item_id',
         to: 'user_product_items.id'
       }
+    },
+    issues: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/issue`,
+      join: {
+        from: 'order_items.id',
+        to: 'issues.order_item_id'
+      }
     }
   }
 }

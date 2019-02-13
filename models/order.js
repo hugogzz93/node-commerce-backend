@@ -24,7 +24,7 @@ export default class Order extends Model {
         from: 'orders.id',
         to: 'order_items.order_id'
       }
-    }
+    },
   }
 
   allowsModificationFrom(user) {

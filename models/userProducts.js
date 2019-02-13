@@ -8,22 +8,22 @@ export default class UserProduct extends Model {
     required: ['user_id', 'product_id', 'name', 'price']
   }
 
-  // static relationMappings = {
-  //   user: {
-  //     relation: Model.BelongsToOneRelation,
-  //     modelClass: `${__dirname}/user`,
-  //     join: {
-  //       from: 'user_product_items.id',
-  //       to: 'users.id'
-  //     }
-  //   },
-  //   product: {
-  //     relation: Model.BelongsToOneRelation,
-  //     modelClass: `${__dirname}/product`,
-  //     join: {
-  //       from: 'user_product_items.id',
-  //       to: 'products.id'
-  //     }
-  //   }
-  // }
+  static relationMappings = {
+    user: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: `${__dirname}/user`,
+      join: {
+        from: 'user_product_items.user_id',
+        to: 'users.id'
+      }
+    },
+    product: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: `${__dirname}/product`,
+      join: {
+        from: 'user_product_items.product_id',
+        to: 'products.id'
+      }
+    }
+  }
 }
