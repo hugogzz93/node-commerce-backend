@@ -25,6 +25,12 @@ const Query = {
     ))
   ),
 
+  issues: (_, { ids }, { dataSources: { issueApi}}) => (
+    issueApi.query().where(builder => (
+      ids ? builder.whereIn('id', ids) : builder
+    ))
+  ),
+
   loginJWT: (_, { auth_token }, { dataSources }) => (
     dataSources.sessionApi.findByAuthToken(auth_token)
   ),
@@ -188,6 +194,12 @@ const Issue = {
   }
 }
 
+const IssueMessage = {
+  author: ( message, _, { dataSources: { userApi }}) => (
+    userApi.query().where({id: message.author_id}).first()
+  )
+}
+
 export default { 
    Query,
    Mutation,
@@ -201,4 +213,5 @@ export default {
    OrderViewer,
    OrderItem,
    Issue,
+   IssueMessage,
  }

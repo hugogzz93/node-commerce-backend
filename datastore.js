@@ -34,6 +34,6 @@ export const dataSources = {
   sessionApi: new SessionApi({ store }),
   orderApi: new OrderApi({store}),
   userProductApi: new UserProductApi({store}),
-  issueApi: new UserApi({store}),
+  issueApi: new IssueApi({store}),
 }
 

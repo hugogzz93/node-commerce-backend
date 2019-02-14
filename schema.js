@@ -7,6 +7,7 @@ const typeDefs = gql`
     users(query: UserQuery): [User]!
     userProducts(ids: [ID]): [UserProduct]!
     orders(ids: [ID]): [Order]!
+    issues(ids: [ID]): [Issue]!
     loginJWT(auth_token: String!): User
   }
 
@@ -160,6 +161,7 @@ const typeDefs = gql`
     author_id: ID!
     issue_id: ID!
     body: String!
+    author: User!
   }
 
   input IssueInput {

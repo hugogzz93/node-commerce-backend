@@ -13,4 +13,8 @@ export default class IssueAPI extends DataSource {
   query() {
     return this.store.Issue.query()
   }
+
+  createMessage(input) {
+    return this.store.IssueMessage.query().insert(input)
+  }
 }
