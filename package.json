@@ -6,8 +6,9 @@
   "scripts": {
     "babel": "babel --presets es2015 js/server.js -o build/server.bundle.js",
     "webpack": "webpack",
-    "start": "nodemon --exec babel-node --presets env,stage-2 server.js",
-    "db:restart": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all"
+    "startApollo": "nodemon --exec babel-node --presets env,stage-2 apolloServer.js",
+    "startExpress": "nodemon --exec babel-node --presets env,stage-2 expressServer.js",
+    "startSockets": "nodemon --exec babel-node --presets env,stage-2 socketServer.js"
   },
   "author": "",
   "license": "ISC",
@@ -37,7 +38,7 @@
     "pg": "^7.7.1",
     "pg-hstore": "^2.3.2",
     "sequelize": "^4.41.2",
-    "sequelize-cli": "^5.4.0"
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.5",

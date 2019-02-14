@@ -8,15 +8,32 @@ import Order from './models/order'
 import Issue from './models/issue'
 import IssueMessage from './models/issueMessage'
 
+import UserApi from './datasources/UserApi'
+import ProductApi from './datasources/ProductApi'
+import SessionApi from './datasources/SessionApi'
+import OrderApi from './datasources/OrderApi'
+import UserProductApi from './datasources/UserProductApi'
+import IssueApi from './datasources/IssueApi'
+
 const knexConnection = knex(connection)
 Model.knex(knexConnection)
 
-export default { 
+const store = { 
   User,
   Product,
   UserProduct,
   Order,
   Issue,
   IssueMessage
-};
+}
+
+export default store
+export const dataSources = {
+  userApi: new UserApi({ store }),
+  productApi: new ProductApi({ store }),
+  sessionApi: new SessionApi({ store }),
+  orderApi: new OrderApi({store}),
+  userProductApi: new UserProductApi({store}),
+  issueApi: new UserApi({store}),
+}
 
