@@ -16,7 +16,7 @@ io.on('connection', socket => {
   socket.on('message', input => {
     dataSources.issueApi
     .createMessage(input)
-    .then(msg => {console.log(`msg_ack: ${msg.body}`); socket.emit('msg_ack', msg)})
+    .then(msg => {console.log(`msg_ack: ${msg.body}`); socket.emit('msg_ack', {author: {id: msg.author_id}, ...msg})})
     .catch(err => {console.error('msg_fail', input, err); socket.emit('msg_fail')})
   })
 })

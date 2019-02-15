@@ -67,11 +67,12 @@ const Mutation = {
 }
 
 const Product = {
-  users: async (product, {query = {}}) => {
-    const {id = null, ...userQuery} = query
-    if(id)
-      userQuery.user_id = id
-    return await product.$relatedQuery('users').where(userQuery)
+  users: (product, { query }, { dataSources }) => {
+    const userQuery = Object.assign({}, ...Object.keys(query).map(e => ({['users.' + e]: query[e]})))
+    return dataSources.userApi.query()
+     .join('user_product_items', 'users.id', '=', 'user_product_items.user_id')
+     .where('user_product_items.product_id', product.id)
+     .where(userQuery)
   }
 }
 
@@ -82,7 +83,7 @@ const User = {
       query.product_id = id
     return user.$relatedQuery('products').where(query)
   },
-  userProducts: (user, {query}) => {
+  userProducts: (user, {query = {}}) => {
     return user.$relatedQuery('userProducts').where(query)
   },
   orders: (user, {query = null}) => (
@@ -111,12 +112,16 @@ const UserOps = {
       return null
   },
   createUserProduct: async (user, { input: {product_id, name, price, image} }, {dataSources}) => {
-    const {stream, filename, mimetype, encoding} = await image
-    return await FileManager
-      .uploadFileForUser({id: user.id, filename, file: stream  })
-      .then(async ref => {
-        return await user.$relatedQuery('userProducts').insert({user_id: user.id, product_id: product_id, name, image: filename, price})
-      })
+    if(image) {
+      const {stream, filename, mimetype, encoding} = await image
+      return await FileManager
+        .uploadFileForUser({id: user.id, filename, file: stream  })
+        .then(async ref => {
+          return await user.$relatedQuery('userProducts').insert({user_id: user.id, product_id: product_id, name, image: filename, price})
+        })
+    } else {
+      return await user.$relatedQuery('userProducts').insert({user_id: user.id, product_id: product_id, name, price})
+    }
   },
   updateUserProduct: async (user, { input: {id, image, ..._input} }, { dataSources }) => {
     if(image) {
