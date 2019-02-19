@@ -34,22 +34,34 @@ const typeDefs = gql`
     description: String
     products(productQuery: ProductQuery): [Product]!
     userProducts(query: UserProductQuery): [UserProduct]!
-    orders: OrderViewer
+    orders: UserOrderViewer
+  }
+  
+  type OrderGroup {
+    id: ID!
+    client_id: ID!
+    client: User!
+    orders: [Order]!
+    total: Float
+    createdAt: String
   }
 
   type Order {
     id: ID!
-    user_id: ID!
+    vendor_id: ID!
+    client_id: ID!
+    vendor: User!
+    client: User!
     total: Float
     orderItems(ids: [ID]): [OrderItem]!
-    user: User!
     status: String
     createdAt: String
   }
 
-  type OrderViewer {
-    createdOrders(query: OrderQuery): [Order]!
-    attendingOrders(query: OrderQuery): [Order]!
+  type UserOrderViewer {
+    orderGroups: [OrderGroup]
+    ordersAsClient(query: OrderQuery): [Order]!
+    ordersAsVendor(query: OrderQuery): [Order]!
   }
 
   type UserProduct {
@@ -136,14 +148,20 @@ const typeDefs = gql`
     id: ID
   }
 
+  input OrderGroupInput {
+    client_id: ID
+    orders: [OrderInput]
+  }
+
   input OrderInput {
     status: String
-    user_id: ID!
-    order_items: [OrderItemInput]!
+    client_id: ID
+    vendor_id: ID
+    orderItems: [OrderItemInput]
   }
 
   input OrderItemInput {
-    user_product_id: ID!
+    user_product_item_id: ID!
     amount: Int!
     status: String
   }
@@ -197,6 +215,7 @@ const typeDefs = gql`
   }
 
   type OrderOps {
+    createOrderGroup(input: OrderGroupInput!): OrderGroup
     updateOrder(input: OrderInput!): Order
     createOrder(input: OrderInput!): Order
     createIssue(input: IssueInput!): Issue

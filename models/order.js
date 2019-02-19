@@ -5,18 +5,26 @@ export default class Order extends Model {
   static tableName = 'orders'
   static jsonSchema = {
     type: 'object',
-    required: ['user_id', 'total']
+    required: ['vendor_id', 'client_id', 'order_group_id']
   }
 
   static relationMappings = {
-    user: {
+    client: {
       relation: Model.BelongsToOneRelation,
       modelClass: `${__dirname}/user`,
       join: {
-        from: 'orders.user_id',
+        from: 'orders.client_id',
         to: 'users.id'
       }
     }, 
+    vendor:{
+      relation: Model.BelongsToOneRelation,
+      modelClass: `${__dirname}/user`,
+      join: {
+        from: 'orders.vendor_id',
+        to: 'users.id'
+      }
+    },
     orderItems: {
       relation: Model.HasManyRelation,
       modelClass: `${__dirname}/orderItem`,
@@ -25,12 +33,20 @@ export default class Order extends Model {
         to: 'order_items.order_id'
       }
     },
+    orderGroup: {
+      relation :Model.BelongsToOneRelation,
+      modelClass: `${__dirname}/orderGroup`,
+      join: {
+        from: 'orders.order_group_id',
+        to: 'order_groups.id'
+      }
+    }
   }
 
   allowsModificationFrom(user) {
     try {
-      console.log('allows', user.id == this.user_id)
-      return user.id == this.user_id
+      console.log('allows', user.id == this.vendor_id)
+      return user.id == this.vendor_id
     } catch(e) {
       console.log('error', e)
       return false
@@ -48,5 +64,10 @@ export default class Order extends Model {
 
   async $beforeUpdate(context) {
     this.updatedAt = new Date()
+  }
+
+  async getTotal() {
+    const orderItems = await this.$relatedQuery('orderItems')
+    return orderItems.reduce((sum, e) => sum + e.price * e.amount, 0)
   }
 }

@@ -9,16 +9,12 @@ export default class Product extends Model {
   }
 
   static relationMappings = {
-    users: {
-      relation: Model.ManyToManyRelation,
-      modelClass: `${__dirname}/user`,
+    userProducts: {
+      relation: Model.HasManyRelation, 
+      modelClass: `${__dirname}/userProduct`,
       join: {
         from: 'products.id',
-        through: {
-          from: 'users_products.product_id',
-          to: 'users_products.user_id'
-        },
-        to: 'users.id',
+        to: 'user_products.product_id',
       }
     }
   }

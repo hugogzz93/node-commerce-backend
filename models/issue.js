@@ -8,6 +8,22 @@ export default class Issue extends Model {
   }
 
   static relationMappings = {
+    creator: {
+      relation: Model.BelongsToRelation,
+      modelClass: `${__dirname}/user`,
+      join: {
+        from: 'issues.creator_id',
+        to: 'users.id'
+      }
+    },
+    attendee: {
+      relation: Model.BelongsToRelation,
+      modelClass: `${__dirname}/user`,
+      join: {
+        from: 'issues.attendee_id',
+        to: 'users.id'
+      }
+    },
     messages: {
       relation: Model.HasManyRelation,
       modelClass: `${__dirname}/issueMessage`,

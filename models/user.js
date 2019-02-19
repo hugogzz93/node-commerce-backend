@@ -37,12 +37,44 @@ export default class User extends Model {
         to: 'user_product_items.user_id'
       }
     },
-    orders: {
+    orderGroups: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/orderGroup`,
+      join: {
+        from: 'users.id',
+        to: 'order_groups.client_id'
+      }
+    },
+    ordersAsClient: {
       relation: Model.HasManyRelation,
       modelClass: `${__dirname}/order`,
       join: {
         from: 'users.id',
-        to: 'orders.user_id'
+        to: 'orders.client_id'
+      }
+    },
+    ordersAsVendor: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/order`,
+      join: {
+        from: 'users.id',
+        to: 'orders.vendor_id'
+      }
+    },
+    createdIssues: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/issue`,
+      join: {
+        from: 'users.id',
+        to: 'issues.creator_id'
+      }
+    },
+    attendingIssues: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/issue`,
+      join: {
+        from: 'users.id',
+        to: 'issues.attendee_id'
       }
     }
   }

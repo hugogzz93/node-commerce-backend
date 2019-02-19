@@ -5,6 +5,7 @@ import User from './models/user'
 import Product from './models/product'
 import UserProduct from './models/userProducts'
 import Order from './models/order'
+import OrderGroup from './models/orderGroup'
 import Issue from './models/issue'
 import IssueMessage from './models/issueMessage'
 
@@ -23,6 +24,7 @@ const store = {
   Product,
   UserProduct,
   Order,
+  OrderGroup,
   Issue,
   IssueMessage
 }

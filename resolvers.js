@@ -67,21 +67,24 @@ const Mutation = {
 }
 
 const Product = {
-  users: (product, { query }, { dataSources }) => {
+  users: (product, { query = {} }, { dataSources }) => {
     const userQuery = Object.assign({}, ...Object.keys(query).map(e => ({['users.' + e]: query[e]})))
     return dataSources.userApi.query()
      .join('user_product_items', 'users.id', '=', 'user_product_items.user_id')
      .where('user_product_items.product_id', product.id)
      .where(userQuery)
+      .distinct(product.constructor.knex().raw('ON (users.id) users.*'))
   }
 }
 
 const User = {
-  products: (user, {productQuery = {}}) => {
-    const {id = null, ...query} = productQuery;
-    if(id)
-      query.product_id = id
-    return user.$relatedQuery('products').where(query)
+  products: (user, { query = {} }, { dataSources }) => {
+    const productQuery = Object.assign({}, ...Object.keys(query).map(e => ({['products.' + e]: query[e]})))
+    return dataSources.productApi.query()
+      .join('user_product_items', 'products.id',  '=', 'user_product_items.product_id')
+      .where('user_product_items.user_id', user.id)
+      .where(productQuery)
+      .distinct(user.constructor.knex().raw('ON (products.id) products.*'))
   },
   userProducts: (user, {query = {}}) => {
     return user.$relatedQuery('userProducts').where(query)
@@ -151,9 +154,27 @@ const UserProduct = {
   )
 }
 
-const OrderViewer = {
-  createdOrders: (user, { query = {} } ) => (
-    user.$relatedQuery('orders').where(query)
+const UserOrderViewer = {
+  orderGroups: (user, { query = {}}, {dataSources}) => (
+    user.$relatedQuery('orderGroups').where(query)
+  ),
+  ordersAsClient: (user, { query = {} } ) => (
+    user.$relatedQuery('ordersAsClient').where(query)
+  ),
+  ordersAsVendor: (user, { query = {}}, { dataSources }) => (
+    user.$relatedQuery('ordersAsVendor').where(query)
+  )
+}
+
+const OrderGroup = {
+  orders: (orderGroup) => (
+    orderGroup.$relatedQuery('orders')
+  ),
+  client: (orderGroup) => (
+    orderGroup.$relatedQuery('client')
+  ),
+  total: (orderGroup) => (
+    orderGroup.getTotal()
   )
 }
 
@@ -163,8 +184,14 @@ const Order = {
       ids ? builder.whereIn('id', ids) : builder
     )
   ),
-  user: (order) => (
-    order.$relatedQuery('user')
+  client: (order) => (
+    order.$relatedQuery('client')
+  ),
+  vendor: (order) => (
+    order.$relatedQuery('vendor')
+  ),
+  total: (order) => (
+    order.getTotal()
   )
 }
 
@@ -178,6 +205,9 @@ const OrderItem = {
 }
 
 const OrderOps = {
+  createOrderGroup: (_, {input}, { dataSources: { orderApi }}) => (
+    orderApi.createOrderGroup(input)
+  ),
   createOrder: (_, {input}, { dataSources: { orderApi } }) => (
     orderApi.create(input)
   ),
@@ -211,11 +241,12 @@ export default {
    Product,
    User,
    Order,
+   OrderGroup,
    UserProduct,
    UserOps,
    ProductOps,
    OrderOps,
-   OrderViewer,
+   UserOrderViewer,
    OrderItem,
    Issue,
    IssueMessage,
