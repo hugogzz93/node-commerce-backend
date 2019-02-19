@@ -2,7 +2,7 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('products', table => {
       table.increments('id').primary()
-      table.string('name').unique()
+      table.string('name').unique().notNullable()
       table.text('description')
       table.timestamp('createdAt')
       table.timestamp('updatedAt')
