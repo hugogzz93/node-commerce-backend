@@ -192,6 +192,9 @@ const Order = {
   ),
   total: (order) => (
     order.getTotal()
+  ),
+  issues: (order) => (
+    order.$relatedQuery('issues')
   )
 }
 
@@ -199,9 +202,6 @@ const OrderItem = {
   userProduct: (orderItem) => (
     orderItem.$relatedQuery('userProduct')
   ),
-  issues: (orderItem) => (
-    orderItem.$relatedQuery('issues')
-  )
 }
 
 const OrderOps = {
@@ -213,14 +213,13 @@ const OrderOps = {
   ),
   updateOrder: (order, {input}, {dataSources: {orderApi}}, { viewer }) => {
     if(order.allowsModificationFrom(viewer))
-      return orderApi.query().patchAndFetchById(ordor.id, input)
+      return orderApi.query().patchAndFetchById(order.id, input)
     else
       return null
   },
-  createIssue: (order, {input}) => {
-    console.log('there')
-    return order.createIssue(input)
-  }
+  createIssue: async (order, {input}) => (
+    await order.$relatedQuery('issues').insertGraph(input)
+  )
 }
 
 const Issue = {

@@ -34,11 +34,19 @@ export default class Order extends Model {
       }
     },
     orderGroup: {
-      relation :Model.BelongsToOneRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: `${__dirname}/orderGroup`,
       join: {
         from: 'orders.order_group_id',
         to: 'order_groups.id'
+      }
+    },
+    issues: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/issue`,
+      join: {
+        from: 'orders.id',
+        to: 'issues.order_id'
       }
     }
   }
@@ -51,10 +59,6 @@ export default class Order extends Model {
       console.log('error', e)
       return false
     }
-  }
-
-  async createIssue(input) {
-    return await Issue.query().insertGraph(input)
   }
 
   async $beforeInsert(context) {

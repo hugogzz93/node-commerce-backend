@@ -8,7 +8,8 @@
     "webpack": "webpack",
     "startApollo": "nodemon --exec babel-node --presets env,stage-2 apolloServer.js",
     "startExpress": "nodemon --exec babel-node --presets env,stage-2 expressServer.js",
-    "startSockets": "nodemon --exec babel-node --presets env,stage-2 socketServer.js"
+    "startSockets": "nodemon --exec babel-node --presets env,stage-2 socketServer.js",
+    "db:reset": "npx knex migrate:rollback && npx knex migrate:latest && npx knex seed:run"
   },
   "author": "",
   "license": "ISC",

@@ -3,13 +3,12 @@ import { Model } from 'objection'
 export default class Issue extends Model {
   static tableName = 'issues'
   static jsonSchema = {
-    type: 'object',
-    required: ['order_item_id']
+    type: 'object'
   }
 
   static relationMappings = {
     creator: {
-      relation: Model.BelongsToRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: `${__dirname}/user`,
       join: {
         from: 'issues.creator_id',
@@ -17,7 +16,7 @@ export default class Issue extends Model {
       }
     },
     attendee: {
-      relation: Model.BelongsToRelation,
+      relation: Model.BelongsToOneRelation,
       modelClass: `${__dirname}/user`,
       join: {
         from: 'issues.attendee_id',
@@ -30,6 +29,14 @@ export default class Issue extends Model {
       join: {
         from: 'issues.id',
         to: 'issue_messages.issue_id'
+      }
+    },
+    order: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: `${__dirname}/order`,
+      join: {
+        from: 'issues.order_id',
+        to: 'orders.id'
       }
     }
   }

@@ -13,11 +13,16 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('user disconnected')
   })
-  socket.on('message', input => {
+  socket.on('join', room => socket.join(room))
+  socket.on('message', ({room, ...input}) => {
     dataSources.issueApi
     .createMessage(input)
-    .then(msg => {console.log(`msg_ack: ${msg.body}`); socket.emit('msg_ack', {author: {id: msg.author_id}, ...msg})})
-    .catch(err => {console.error('msg_fail', input, err); socket.emit('msg_fail')})
+    .then(msg => {
+      console.log(`room: ${room} - msg_ack: ${msg.body}`); 
+      io.in(room).emit('msg_ack', {author: {id: msg.author_id}, ...msg})
+      io.in('game').emit('big-announcement', 'the game will start soon');
+    })
+    .catch(err => {console.error('msg_fail', input, err); socket.emit('msg_fail', err, input)})
   })
 })
 

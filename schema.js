@@ -56,6 +56,7 @@ const typeDefs = gql`
     orderItems(ids: [ID]): [OrderItem]!
     status: String
     createdAt: String
+    issues: [Issue]!
   }
 
   type UserOrderViewer {
@@ -80,7 +81,6 @@ const typeDefs = gql`
     amount: Int!
     status: String
     userProduct: UserProduct!
-    issues: [Issue]!
   }
 
   type Mutation {
@@ -168,7 +168,7 @@ const typeDefs = gql`
 
   type Issue {
     id: ID!
-    order_item_id: ID!
+    order_id: ID!
     status: String!
     createdAt: String!
     messages: [IssueMessage]!
@@ -183,7 +183,8 @@ const typeDefs = gql`
   }
 
   input IssueInput {
-    order_item_id: ID!
+    creator_id: ID!
+    attendee_id: ID!
     messages: [IssueMessageInput]
   }
 
