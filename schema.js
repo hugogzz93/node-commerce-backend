@@ -36,7 +36,7 @@ const typeDefs = gql`
     userProducts(query: UserProductQuery): [UserProduct]!
     orders: UserOrderViewer
   }
-  
+
   type OrderGroup {
     id: ID!
     client_id: ID!
@@ -172,6 +172,7 @@ const typeDefs = gql`
     status: String!
     createdAt: String!
     messages: [IssueMessage]!
+    newMessages(user_id: ID!): Boolean!
   }
 
   type IssueMessage {

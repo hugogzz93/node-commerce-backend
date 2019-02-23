@@ -38,6 +38,18 @@ export default class Issue extends Model {
         from: 'issues.order_id',
         to: 'orders.id'
       }
+    },
+    last_seen_messages: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/lastSeenMessage`,
+      join: {
+        from: 'issues.id',
+        to: 'last_seen_messages.issue_id'
+      }
     }
+  }
+
+  getLastMessage() {
+    return this.$relatedQuery('messages').orderBy('createdAt', 'desc').first()
   }
 }

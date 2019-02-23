@@ -8,6 +8,7 @@ import Order from './models/order'
 import OrderGroup from './models/orderGroup'
 import Issue from './models/issue'
 import IssueMessage from './models/issueMessage'
+import LastSeenMessage from './models/lastSeenMessage'
 
 import UserApi from './datasources/UserApi'
 import ProductApi from './datasources/ProductApi'
@@ -26,7 +27,8 @@ const store = {
   Order,
   OrderGroup,
   Issue,
-  IssueMessage
+  IssueMessage,
+  LastSeenMessage
 }
 
 export default store

@@ -22,4 +22,8 @@ export default class UserAPI extends DataSource {
     return this.store.UserProduct.query().insert(input)
   }
 
+  async updateLastMessageSeen({user_id, issue_id, issue_message_id}) {
+    const user = await this.store.User.query().where({id: user_id}).first()
+    user.updateLastSeenMessage({issue_id, issue_message_id})
+  }
 }

@@ -223,8 +223,17 @@ const OrderOps = {
 }
 
 const Issue = {
-  messages: (issue, _, { dataSources: { issueApi}}, { viewer }) => {
-    return issue.$relatedQuery('messages')
+  messages: (issue, _, { dataSources: { issueApi}}) => (
+    issue.$relatedQuery('messages')
+  ),
+  newMessages: async (issue, { user_id }, { dataSources }) => {
+    const lastMessage = await issue.getLastMessage()
+    if(!lastMessage) return false
+    const user = await dataSources.userApi.query().where({id: user_id}).first()
+    const lastSeenMessageRecord = await user.$relatedQuery('last_seen_messages').where({issue_id: issue.id}).first()
+    if(!lastSeenMessageRecord) return true
+    console.log('lsm', lastSeenMessageRecord.issue_message_id, lastMessage.id)
+    return lastSeenMessageRecord.issue_message_id != lastMessage.id
   }
 }
 

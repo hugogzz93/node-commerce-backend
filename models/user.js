@@ -76,6 +76,14 @@ export default class User extends Model {
         from: 'users.id',
         to: 'issues.attendee_id'
       }
+    },
+    last_seen_messages: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/lastSeenMessage`,
+      join: {
+        from: 'users.id',
+        to: 'last_seen_messages.user_id'
+      }
     }
   }
 
@@ -111,6 +119,15 @@ export default class User extends Model {
 
   removeProduct(product) {
     return this.$relatedQuery('products').unrelate(product)
+  }
+
+  async updateLastSeenMessage({issue_id, issue_message_id}) {
+    const lastSeen = await this.$relatedQuery('last_seen_messages').where({issue_id: issue_id}).first()
+
+    if(lastSeen)
+      return await lastSeen.$query().patch({issue_message_id})
+    else 
+      return await this.$relatedQuery('last_seen_messages').insert({user_id: this.id, issue_id, issue_message_id})
   }
 
 }

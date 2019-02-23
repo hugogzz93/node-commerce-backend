@@ -14,7 +14,10 @@ export default class IssueAPI extends DataSource {
     return this.store.Issue.query()
   }
 
-  createMessage(input) {
-    return this.store.IssueMessage.query().insert(input)
+  async createMessage(input) {
+    const message = await this.store.IssueMessage.query().insert(input)
+    const user = await this.store.User.query().where({id: input.author_id}).first()
+    await user.updateLastSeenMessage({issue_id: message.issue_id, issue_message_id: message.id})
+    return message
   }
 }
