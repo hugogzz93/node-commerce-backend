@@ -7,6 +7,7 @@ const typeDefs = gql`
     users(query: UserQuery): [User]!
     userProducts(ids: [ID]): [UserProduct]!
     orders(ids: [ID]): [Order]!
+    orderGroups(ids: [ID]): [OrderGroup]!
     issues(ids: [ID]): [Issue]!
     loginJWT(auth_token: String!): User
   }
@@ -56,11 +57,11 @@ const typeDefs = gql`
     orderItems(ids: [ID]): [OrderItem]!
     status: String
     createdAt: String
-    issues: [Issue]!
+    issues(query: IssueQuery): [Issue]!
   }
 
   type UserOrderViewer {
-    orderGroups: [OrderGroup]
+    orderGroups(query: OrderGroupQuery): [OrderGroup]!
     ordersAsClient(query: OrderQuery): [Order]!
     ordersAsVendor(query: OrderQuery): [Order]!
   }
@@ -144,8 +145,22 @@ const typeDefs = gql`
     name: String
   }
 
+  input OrderGroupQuery {
+    id: ID
+  }
+
   input OrderQuery {
     id: ID
+  }
+
+  enum IssueStatus {
+    open
+    closed
+  }
+  
+  input IssueQuery {
+    id: ID
+    status: IssueStatus
   }
 
   input OrderGroupInput {

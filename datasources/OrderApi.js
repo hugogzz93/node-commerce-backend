@@ -15,6 +15,10 @@ export default class OrderAPI extends DataSource {
     return this.store.Order.query()
   }
 
+  orderGroupQuery() {
+    return this.store.OrderGroup.query()
+  }
+
   createOrderGroup(input) {
     return transaction(this.store.OrderGroup.knex(), trx => (
       this.store.OrderGroup.query(trx).insertGraph(input).context({trx})

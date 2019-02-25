@@ -16,7 +16,12 @@ io.on('connection', socket => {
     console.log('user disconnected')
     delete connections.socket
   })
-  socket.on('join', room => socket.join(room))
+  socket.on('join', room => {console.log('user joining:', room); socket.join(room, err => {
+    if(err)
+      console.log('couldnt join room:', room)
+    else
+      socket.emit('room_joined', room)
+  } ) })
   socket.on('msg_seen', ( input ) => {
     console.log(`message seen - msg: ${input.issue_message_id}, user: ${input.user_id} `)
     if(connections[socket].msg_seen == input.issue_message_id) return

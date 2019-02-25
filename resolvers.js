@@ -25,6 +25,12 @@ const Query = {
     ))
   ),
 
+  orderGroups: (_, { ids }, { dataSources: { orderApi }}) => (
+    orderApi.orderGroupQuery().where(builder => (
+      ids ? builder.whereIn('id', ids) : builder
+    ))
+  ),
+
   issues: (_, { ids }, { dataSources: { issueApi}}) => (
     issueApi.query().where(builder => (
       ids ? builder.whereIn('id', ids) : builder
@@ -193,8 +199,8 @@ const Order = {
   total: (order) => (
     order.getTotal()
   ),
-  issues: (order) => (
-    order.$relatedQuery('issues')
+  issues: (order, {query}) => (
+    order.$relatedQuery('issues').where({...query})
   )
 }
 
