@@ -58,6 +58,7 @@ const typeDefs = gql`
     status: String
     createdAt: String
     issues(query: IssueQuery): [Issue]!
+    trackingNumbers: [TrackingNumber]!
   }
 
   type UserOrderViewer {
@@ -181,6 +182,10 @@ const typeDefs = gql`
     status: String
   }
 
+  input TrackingNumberInput {
+    value: String
+  }
+
   type Issue {
     id: ID!
     order_id: ID!
@@ -236,6 +241,21 @@ const typeDefs = gql`
     updateOrder(input: OrderInput!): Order
     createOrder(input: OrderInput!): Order
     createIssue(input: IssueInput!): Issue
+    trackingNumber(id: ID): OrderTrackingNumberOps
+  }
+
+  type OrderTrackingNumberOps {
+    create(input: TrackingNumberInput): TrackingNumber
+    update(input: TrackingNumberInput): TrackingNumber
+    delete: Boolean
+  }
+
+  type TrackingNumber {
+    id: ID
+    order_id: ID
+    value: String
+    createdAt: String
+    updateAt: String
   }
 
 `

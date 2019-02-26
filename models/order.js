@@ -48,6 +48,14 @@ export default class Order extends Model {
         from: 'orders.id',
         to: 'issues.order_id'
       }
+    },
+    trackingNumbers: {
+      relation: Model.HasManyRelation,
+      modelClass: `${__dirname}/trackingNumber`,
+      join: {
+        from: 'orders.id',
+        to: 'tracking_numbers.order_id'
+      }
     }
   }
 

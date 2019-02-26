@@ -201,7 +201,10 @@ const Order = {
   ),
   issues: (order, {query}) => (
     order.$relatedQuery('issues').where({...query})
-  )
+  ),
+  trackingNumbers: (order) => (
+    order.$relatedQuery('trackingNumbers')
+  ),
 }
 
 const OrderItem = {
@@ -225,7 +228,24 @@ const OrderOps = {
   },
   createIssue: async (order, {input}) => (
     await order.$relatedQuery('issues').insertGraph(input)
-  )
+  ),
+  trackingNumber: async (order, { id = null }) => {
+    const number = await order.$relatedQuery('trackingNumbers').where({id}).first()
+    return { order, number }
+  }
+}
+
+const OrderTrackingNumberOps = {
+  create: async ({order}, {input}) => (
+    await order.$relatedQuery('trackingNumbers').insert(input)
+  ),
+  update: async ({number}, { input }) => (
+    await number.$query().patchAndFetchById(number.id, input)
+  ),
+  delete: async ({number}) => {
+    const status = await number.$query().delete().where({id: number.id})
+    return !!status
+  }
 }
 
 const Issue = {
@@ -260,6 +280,7 @@ export default {
    UserOps,
    ProductOps,
    OrderOps,
+   OrderTrackingNumberOps,
    UserOrderViewer,
    OrderItem,
    Issue,
