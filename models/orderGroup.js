@@ -44,4 +44,11 @@ export default class OrderGroup extends Model {
     }
     return sum
   }
+
+  async getStatus() {
+    const orders = await this.$relatedQuery('orders')
+    if(orders.some(o => o.status == 'in_progress' || o.status == 'in_transit'))
+      return 'in_progress'
+    return orders[0].status
+  }
 }

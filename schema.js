@@ -38,6 +38,12 @@ const typeDefs = gql`
     orders: UserOrderViewer
   }
 
+  enum OrderGroupStatus {
+    in_progress
+    delivered
+    canceled
+  }
+
   type OrderGroup {
     id: ID!
     client_id: ID!
@@ -45,6 +51,7 @@ const typeDefs = gql`
     orders: [Order]!
     total: Float
     createdAt: String
+    status: OrderGroupStatus
   }
 
   enum OrderStatus {
@@ -224,6 +231,7 @@ const typeDefs = gql`
   input IssueMessageInput {
     author_id: ID!
     body: String
+
   }
 
   type ProductConnection {

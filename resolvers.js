@@ -184,7 +184,10 @@ const OrderGroup = {
   ),
   total: (orderGroup) => (
     orderGroup.getTotal()
-  )
+  ),
+  status: orderGroup => (
+    orderGroup.getStatus()
+  ),
 }
 
 const Order = {
