@@ -10,7 +10,7 @@ exports.up = function(knex, Promise) {
     }),
     knex.schema.createTable('orders', table => {
       table.increments('id').primary()
-      table.enu('status', ['in_progress', 'completed', 'canceled']).default('in_progress')
+      table.enu('status', ['in_progress','in_transit', 'delivered', 'canceled']).default('in_progress')
       table.integer('client_id').notNullable()
       table.foreign('client_id').references('users.id')
       table.integer('vendor_id').notNullable()

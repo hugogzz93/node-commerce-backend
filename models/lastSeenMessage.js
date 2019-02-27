@@ -30,7 +30,7 @@ export default class LastSeenMessage extends Model {
     }
   }
 
-  $beforeUpdate() {
+  $beforeInsert() {
     this.updatedAt = new Date()
     this.createdAt = new Date()
   }

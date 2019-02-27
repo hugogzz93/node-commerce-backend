@@ -47,6 +47,13 @@ const typeDefs = gql`
     createdAt: String
   }
 
+  enum OrderStatus {
+    in_progress
+    in_transit
+    delivered
+    canceled
+  }
+
   type Order {
     id: ID!
     vendor_id: ID!
@@ -55,7 +62,7 @@ const typeDefs = gql`
     client: User!
     total: Float
     orderItems(ids: [ID]): [OrderItem]!
-    status: String
+    status: OrderStatus
     createdAt: String
     issues(query: IssueQuery): [Issue]!
     trackingNumbers: [TrackingNumber]!
@@ -93,6 +100,7 @@ const typeDefs = gql`
     user(id: ID): UserOps,
     product(id: ID): ProductOps
     order(id: ID): OrderOps
+    issue(id: ID!): IssueOps
   }
 
   type File {
@@ -170,7 +178,7 @@ const typeDefs = gql`
   }
 
   input OrderInput {
-    status: String
+    status: OrderStatus
     client_id: ID
     vendor_id: ID
     orderItems: [OrderItemInput]
@@ -201,6 +209,10 @@ const typeDefs = gql`
     issue_id: ID!
     body: String!
     author: User!
+  }
+
+  type IssueOps {
+    close: Issue
   }
 
   input IssueInput {

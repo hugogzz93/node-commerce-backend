@@ -70,6 +70,9 @@ const Mutation = {
   order: (_, { id }, { dataSources: { orderApi }}) => (
     id ? orderApi.query().where({id}).first() : {}
   ),
+  issue: (_, {id}, { dataSources: {issueApi}}) => (
+    issueApi.query().where({id}).first()
+  )
 }
 
 const Product = {
@@ -220,15 +223,16 @@ const OrderOps = {
   createOrder: (_, {input}, { dataSources: { orderApi } }) => (
     orderApi.create(input)
   ),
-  updateOrder: (order, {input}, {dataSources: {orderApi}}, { viewer }) => {
+  updateOrder: (order, {input}, {dataSources: {orderApi}, viewer}) => {
     if(order.allowsModificationFrom(viewer))
       return orderApi.query().patchAndFetchById(order.id, input)
     else
       return null
   },
-  createIssue: async (order, {input}) => (
-    await order.$relatedQuery('issues').insertGraph(input)
-  ),
+  createIssue: async (order, {input}) => {
+    const json = await order.$relatedQuery('issues').insertGraph(input)
+    return await order.$relatedQuery('issues').where({id: json.id }).first()
+  },
   trackingNumber: async (order, { id = null }) => {
     const number = await order.$relatedQuery('trackingNumbers').where({id}).first()
     return { order, number }
@@ -263,6 +267,12 @@ const Issue = {
   }
 }
 
+const IssueOps = {
+  close: (issue ) => (
+    issue.$query().where({id: issue.id}).patchAndFetchById(issue.id, {status: 'closed'})
+  )
+}
+
 const IssueMessage = {
   author: ( message, _, { dataSources: { userApi }}) => (
     userApi.query().where({id: message.author_id}).first()
@@ -284,5 +294,6 @@ export default {
    UserOrderViewer,
    OrderItem,
    Issue,
+   IssueOps,
    IssueMessage,
  }
