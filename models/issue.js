@@ -52,4 +52,13 @@ export default class Issue extends Model {
   getLastMessage() {
     return this.$relatedQuery('messages').orderBy('createdAt', 'desc').first()
   }
+
+  $beforeInsert() {
+    this.updatedAt = new Date()
+    this.createdAt = new Date()
+  }
+
+  $beforeUpdate() {
+    this.updatedAt = new Date()
+  }
 }
