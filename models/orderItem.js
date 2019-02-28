@@ -44,14 +44,28 @@ export default class OrderItem extends Model {
       })
   }
 
-  async setSamePriceAsUserProduct(userProduct, context) {
-  this.price = userProduct.price
+  async setSamePriceAsUserProduct(userProduct) {
+    this.price = userProduct.price
+  }
+
+  validateItemStock(userProduct) {
+    if(userProduct.stock < this.amount)
+      throw new objection.ValidationError({
+        message: 'orderItem amount exceeds available stock',
+        type: 'InsufficientStock',
+        data: {
+          stock: userProduct.stock,
+          amount: this.amount,
+          userProductId: userProduct.id
+        }
+      })
   }
 
   async userProductHooks(orderItem, context) {
     const userProduct = await orderItem.$relatedQuery('userProduct')
     return Promise.all([
       orderItem.validateItemVendorSameAsOrderVendor(userProduct, context),
+      orderItem.validateItemStock(userProduct, context),
       orderItem.setSamePriceAsUserProduct(userProduct, context)
     ])
   }
