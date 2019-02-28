@@ -4,6 +4,7 @@ exports.up = function(knex, Promise) {
     table.increments('id').primary()
     table.string('name').unique().notNullable()
     table.string('image')
+    table.integer('stock').notNullable().default(0)
     table.float('price').notNullable()
     table.integer('user_id').unsigned().notNullable()
     table.integer('product_id').unsigned().notNullable()

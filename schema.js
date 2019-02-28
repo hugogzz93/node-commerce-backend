@@ -89,6 +89,7 @@ const typeDefs = gql`
     price: Float!
     image: String
     user: User!
+    stock: Int
   }
 
   type OrderItem {
@@ -108,6 +109,7 @@ const typeDefs = gql`
     product(id: ID): ProductOps
     order(id: ID): OrderOps
     issue(id: ID!): IssueOps
+    userProduct(id: ID!): UserProductOps
   }
 
   type File {
@@ -128,6 +130,7 @@ const typeDefs = gql`
     name: String
     price: Float
     image: Upload
+    stock: Int
   }
 
   input UserInput {
@@ -254,6 +257,10 @@ const typeDefs = gql`
 
   type ProductOps {
     updateProduct(input: ProductInput!): Product
+  }
+
+  type UserProductOps {
+    update(input: UserProductInput!): UserProduct!
   }
 
   type OrderOps {

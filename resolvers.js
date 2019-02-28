@@ -66,12 +66,14 @@ const Mutation = {
   product: (_, {id}, { dataSources: {productApi} }) => (
     productApi.query().where({id}).first()
   ),
-
   order: (_, { id }, { dataSources: { orderApi }}) => (
     id ? orderApi.query().where({id}).first() : {}
   ),
   issue: (_, {id}, { dataSources: {issueApi}}) => (
     issueApi.query().where({id}).first()
+  ),
+  userProduct: (_, {id}, {dataSources }) => (
+    dataSources.userProductApi.query().where({id}).first()
   )
 }
 
@@ -161,6 +163,13 @@ const UserProduct = {
   user: (userProduct) => (
     userProduct.$relatedQuery('user')
   )
+}
+
+const UserProductOps = {
+  update: ( uProd, { input } ) => {
+    console.log('@@@', uProd.id, input)
+    return uProd.$query().patchAndFetchById(uProd.id, input)
+  }
 }
 
 const UserOrderViewer = {
@@ -290,6 +299,7 @@ export default {
    Order,
    OrderGroup,
    UserProduct,
+   UserProductOps,
    UserOps,
    ProductOps,
    OrderOps,
