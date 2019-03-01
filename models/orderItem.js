@@ -23,7 +23,7 @@ export default class OrderItem extends Model {
     },
     userProduct: {
       relation: Model.BelongsToOneRelation,
-      modelClass: `${__dirname}/userProducts`,
+      modelClass: `${__dirname}/userProduct`,
       join: {
         from: 'order_items.user_product_item_id',
         to: 'user_product_items.id'
