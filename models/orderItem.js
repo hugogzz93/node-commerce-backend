@@ -61,11 +61,18 @@ export default class OrderItem extends Model {
       })
   }
 
+   deductItemStock(userProduct, context) {
+    return userProduct.$query(context.trx)
+                      .patch({stock: userProduct.stock - this.amount})
+                      .where({id: userProduct.id})
+  }
+
   async userProductHooks(orderItem, context) {
     const userProduct = await orderItem.$relatedQuery('userProduct')
     return Promise.all([
       orderItem.validateItemVendorSameAsOrderVendor(userProduct, context),
       orderItem.validateItemStock(userProduct, context),
+      orderItem.deductItemStock(userProduct, context),
       orderItem.setSamePriceAsUserProduct(userProduct, context)
     ])
   }
@@ -73,7 +80,7 @@ export default class OrderItem extends Model {
   $beforeInsert(context) {
     return Promise.all([
       this.userProductHooks(this, context),
-      async () => await this.$relatedQuery('userProduct').then(up => {this.price = up.price; console.log('price', this.price)})
+      async () => await this.$relatedQuery('userProduct').then(up => {this.price = up.price})
     ])
   }
 }
