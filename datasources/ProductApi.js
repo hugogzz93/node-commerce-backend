@@ -17,5 +17,4 @@ export default class ProductAPI extends DataSource {
   create(input) {
     return this.store.Product.query().insert(input)
   }
-
 }

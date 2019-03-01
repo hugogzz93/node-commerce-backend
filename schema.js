@@ -256,6 +256,7 @@ const typeDefs = gql`
   }
 
   type ProductOps {
+    create(input: ProductInput!): Product
     updateProduct(input: ProductInput!): Product
   }
 

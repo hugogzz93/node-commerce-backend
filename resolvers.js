@@ -64,7 +64,7 @@ const Mutation = {
   ),
 
   product: (_, {id}, { dataSources: {productApi} }) => (
-    productApi.query().where({id}).first()
+    id ? productApi.query().where({id}).first() : {}
   ),
   order: (_, { id }, { dataSources: { orderApi }}) => (
     id ? orderApi.query().where({id}).first() : {}
@@ -151,6 +151,9 @@ const UserOps = {
 }
 
 const ProductOps = {
+  create: async (_, { input }, {dataSources}) => (
+    await dataSources.productApi.create(input)
+  ),
   updateProduct: (product, {input}, {dataSources: {productApi}, viewer}) => {
     if(product.allowsModificationFrom(viewer))
       return productApi.query().patchAndFetchById(product.id, input)
