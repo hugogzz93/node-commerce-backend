@@ -51,14 +51,6 @@ const Mutation = {
     dataSources.sessionApi.logout({auth_token})
   ),
 
-  createProduct: (_, {productInput}, { dataSources }) => (
-    dataSources.productApi.create(productInput)
-  ),
-
-  createUser: (_, { userInput }, { dataSources }) => (
-    dataSources.userApi.create(userInput)
-  ),
-
   user: (_, {id}, { dataSources: {userApi} }) => (
     userApi.query().where({id}).first()
   ),
